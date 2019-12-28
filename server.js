@@ -53,7 +53,7 @@ if (process.env.NODE_ENV === 'production') {
 
 	// Express serve up index.html file if it doesn't recognize route
 	app.get('*', (req, res) => {
-		res.sendFile(path.resolve(__dirname, 'my-svelte-app', 'public', 'index.html'));
+		res.sendFile(path.resolve('my-svelte-app', 'public', 'index.html'));
 	});
 }
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));
