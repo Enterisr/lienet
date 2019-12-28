@@ -5,6 +5,7 @@ const app = express();
 const port = process.env.PORT || 6969;
 const querystring = require('querystring');
 const cors = require('cors');
+const path = require('path');
 app.use(cors());
 app.use(express.json());
 app.get('/connect', (req, res) => {
