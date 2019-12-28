@@ -2,8 +2,9 @@ const express = require('express');
 const MongoClient = require('mongodb').MongoClient;
 const url = 'mongodb://localhost:27017/lienet';
 const app = express();
-const port = 6969;
-var cors = require('cors');
+const port = process.env.PORT || 6969;
+const querystring = require('querystring');
+const cors = require('cors');
 app.use(cors());
 app.use(express.json());
 app.get('/connect', (req, res) => {
@@ -44,4 +45,15 @@ app.get('/titles', (req, res) => {
 		}
 	});
 });
+if (process.env.NODE_ENV === 'production') {
+	// Serve any static files
+	app.use(express.static(path.join(__dirname, 'client/build'))).use(cors()).use(cookieParser());
+	app.use(express.static('client/build'));
+
+	// Express serve up index.html file if it doesn't recognize route
+	app.get('*', (req, res) => {
+		res.sendFile(path.resolve(__dirname, 'my-svelte-app', 'public', 'index.html'));
+	});
+}
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));
+//TODO: change this to prod mode...
