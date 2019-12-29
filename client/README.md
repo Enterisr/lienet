@@ -17,7 +17,7 @@ cd svelte-app
 
 
 ## Get started
-
+s
 Install the dependencies...
 
 ```bash
