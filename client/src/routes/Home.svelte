@@ -57,6 +57,7 @@
     box-shadow: 0px 0px 8px -5px rgb(32, 121, 255);
     background-color: rgba(153, 153, 153, 0.76);
     color: black !important;
+    overflow: hidden;
     transition: 0.5s ease all;
   }
   li:nth-child(odd) {

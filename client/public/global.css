@@ -12,6 +12,7 @@ body {
 	direction: rtl;
 	padding: 8px;
 	background: rgb(247, 243, 243);
+	font-size: 1.5vh;
 	text-align: center;
 	box-sizing: border-box;
 	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue",

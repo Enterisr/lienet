@@ -30,10 +30,9 @@
 <style>
   .title-div {
     position: relative;
-
     text-align: center;
     font-size: 1.5em;
-    margin: 0;
+    margin-bottom: 1em;
     padding: 0;
   }
   .back-span {
@@ -45,7 +44,21 @@
   }
   .article-body {
     background: white;
-    padding: 10px;
+    padding: 4vh;
+    overflow: auto;
+    max-height: 70vh;
+    max-width: 39vw;
+    text-align: center;
+    margin: auto;
+  }
+  @media screen and (max-width: 700px) {
+    .article-body {
+      min-width: 100%;
+      overflow: auto;
+      max-height: 70vh;
+      margin: 0;
+      padding: 0;
+    }
   }
 </style>
 

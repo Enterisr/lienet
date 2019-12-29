@@ -6,7 +6,7 @@
 
 <style>
   .wrapper {
-    background: linear-gradient(#e8f4ffdc, #00c5ffa8);
+    background: linear-gradient(#fafafadc, #51a9c4);
     padding: 1em;
     height: 100%;
     max-width: 50vw;
@@ -23,7 +23,9 @@
   }
   h1 {
     font-size: 2em;
-    background: yellow;
+    background: rgba(229, 255, 0, 0.644);
+    color: rgb(0, 195, 255);
+    box-shadow: 10px 10px 52px 3px rgba(18, 102, 180, 0.158);
   }
   @media screen and (max-width: 600px) {
     .wrapper {
