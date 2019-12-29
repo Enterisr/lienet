@@ -48,8 +48,10 @@ app.get('/titles', (req, res) => {
 });
 if (process.env.NODE_ENV === 'production') {
 	// Serve any static files
-	app.use(express.static(path.join(__dirname, 'client/build'))).use(cors());
-	app.use(express.static('client/build'));
+	app.use(express.static(path.join(__dirname, 'client/public/build'))).use(cors());
+	app.use(express.static('client/public/build'));
+	app.use(express.static('client/public'));
+	app.use(express.static(path.join(__dirname, 'client/public')));
 
 	// Express serve up index.html file if it doesn't recognize route
 	app.get('*', (req, res) => {
