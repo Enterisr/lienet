@@ -5,15 +5,14 @@
   console.log($location);
   let article = $location.slice(1);
   if (!isNaN(article)) {
-    let urlAddr = document.location.origin;
-
+    let originAddr = document.location.origin;
     if (window.location.href.includes("localhost")) {
       const uri = new URL(window.location.href);
       uri.port = "6969";
       urlAddr = uri;
+      originAddr = urlAddr.origin;
     }
-
-    fetch(urlAddr.origin + "/connect?num=" + article)
+    fetch(originAddr + "/connect?num=" + article)
       .then(dat => {
         console.log(dat);
         return dat.json();
