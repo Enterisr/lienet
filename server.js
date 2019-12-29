@@ -1,6 +1,6 @@
 const express = require('express');
 const MongoClient = require('mongodb').MongoClient;
-const url = 'mongodb://46.120.236.110/lienet';
+const url = process.env.MONGOLAB_URI || 'mongodb://localhost:27017/lienet';
 const app = express();
 const port = process.env.PORT || 6969;
 const querystring = require('querystring');
