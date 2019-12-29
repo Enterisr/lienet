@@ -53,6 +53,7 @@ if (process.env.NODE_ENV === 'production') {
 
 	// Express serve up index.html file if it doesn't recognize route
 	app.get('*', (req, res) => {
+		console.log('chacted!!!!!!!!!!!!!!!!!!!!!!!!!That!');
 		res.sendFile(path.resolve('client', 'public', 'index.html'));
 	});
 }
