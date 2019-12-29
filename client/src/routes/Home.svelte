@@ -27,8 +27,11 @@
       const uri = new URL(window.location.origin);
       uri.port = "6969";
       urlAddr = uri;
+      urlAddr += "titles";
+    } else {
+      urlAddr += "/titles";
     }
-    const res = await fetch(urlAddr + "titles");
+    const res = await fetch(urlAddr);
     console.log(res);
     const resJasoned = await res.json();
     console.log(resJasoned);

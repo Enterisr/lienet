@@ -6,11 +6,13 @@
   let article = $location.slice(1);
   if (!isNaN(article)) {
     let urlAddr = document.location.origin;
+
     if (window.location.href.includes("localhost")) {
       const uri = new URL(window.location.href);
       uri.port = "6969";
       urlAddr = uri;
     }
+
     fetch(urlAddr.origin + "/connect?num=" + article)
       .then(dat => {
         console.log(dat);
