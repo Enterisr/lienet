@@ -2,6 +2,9 @@
   import routes from "./routes";
 
   import Router from "svelte-spa-router";
+  function OpenMail(){
+
+  }
 </script>
 
 <style>
@@ -9,12 +12,30 @@
     background: linear-gradient(#fafafadc, #51a9c4);
     padding: 1em;
     height: 100%;
-    max-width: 50vw;
+    max-width: 70vw;
     text-align: center;
     margin: 0;
     overflow: hidden;
     padding: 1em;
     margin: auto;
+  }
+  .yellowMail{
+    background:yellow;
+    
+    cursor: pointer;
+    position: fixed;
+    top: calc(100% - 2em);
+    left: 0em;
+    font-size: 1em;
+  }
+  
+  @keyframes adMatay{
+    0%{
+      transform: rotateZ(0deg);
+    }
+    100%{
+      transform: rotateZ(360deg);
+    }
   }
   .router-wrap {
     background: rgb(241, 238, 231);
@@ -31,12 +52,17 @@
     .wrapper {
       max-width: 100vw;
     }
+    .yellowMail{
+      display: none;
+    }
   }
 </style>
 
 <div class="wrapper">
   <h1>Lienet - עלילות הביבס בארץ הקודש</h1>
+  <button  onclick={()=>{   window.location.href = "mailto:yourmom@ismy.babe?subject= יש לי חדשות לא מעניינות בשבילכם&body=אהמ אהמ";} } title = "רק כתבות בעלות אפס תועלת לציבור בבקשה!!!" class="yellowMail">המייל הצהוב!</button>
   <div class="router-wrap">
+  
     <Router {routes} />
   </div>
 </div>

@@ -12,15 +12,7 @@
   } from "svelte-spa-router";
   $: artics = [];
   GetTitles();
-  /*const artics = [
-    { name: "ביבי בייץ אותי", id: 0 },
-    { name: "ביבי עשה מרק קטשופ בבית קפה ולא נתן טיפ למלצרית", id: 1 },
-    { name: "ביבי שפך את החלב ובכה", id: 2 },
-    { name: "ביבי אמר לבנט שההשתלת שיער שלו נראית כמו דשא סיתנטי", id: 3 },
-    { name: "נתניהו שאל בחורה מה השעה בשביל להתחיל איתה", id: 4 },
-    { name: " ביבי חטף מילד אמיתי סוכריה!", id: 5 },
-
-  ];*/
+  
   async function GetTitles() {
     let urlAddr = document.location.origin;
     if (window.location.href.includes("localhost")) {
@@ -41,6 +33,9 @@
       throw new Error(resJasoned);
     }
   }
+  function GenerateRandomNumber(){
+    return Math.floor((Math.random()*100)+1);
+  }
 </script>
 
 <style>
@@ -54,14 +49,18 @@
     border-radius: 0px 1em 1em 0em;
   }
   li {
-    padding: 2em;
+ padding: 2em;
     font-size: 1em;
     margin: 1em;
     box-shadow: 0px 0px 8px -5px rgb(32, 121, 255);
+    height: 10vh;
     background-color: rgba(153, 153, 153, 0.76);
     color: black !important;
+    position: relative;
     overflow: hidden;
     transition: 0.5s ease all;
+    box-sizing: border-box;
+
   }
   li:nth-child(odd) {
     background: rgb(85, 85, 255);
@@ -70,23 +69,30 @@
     background: rgb(255, 0, 0);
   }
   li > .img-div > img {
-    border-radius: 30px;
+   border-radius: 30px;
     position: absolute;
+    /* margin: auto; */
+    height: 3em;
+    transform: translateY(-50%);
+    top: 50%;
   }
   li > .img-div {
     color: black;
-    left: 0;
-    margin: -25px 0;
+    /* left: 0; */
     text-overflow: ellipsis;
     overflow: visible;
-    text-align: left;
-    max-width: calc(100% - 29px);
+    max-width: calc(100% - 1.5em);
     position: relative;
+    text-align: left;
+    height: 100%;
   }
   .a-div {
-    max-height: 1em;
-    max-width: 79%;
-    position: relative;
+     max-width: 79%;
+    position: absolute;
+  
+    text-align: right;
+    transform: translateY(-50%);
+    top: 50%;
   }
 
   a {
@@ -103,7 +109,7 @@
   {#each artics as artic (artic.id)}
     <li>
       <div class="img-div">
-        <img src="https://picsum.photos/55" alt="איש סגול רע" />
+        <img src="https://picsum.photos/{GenerateRandomNumber()}" alt="איש סגול רע" />
       </div>
       <div class="a-div">
         <a href={'#/' + artic.id} title={artic.title}>{artic.title}</a>

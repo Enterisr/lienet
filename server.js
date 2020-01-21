@@ -1,6 +1,7 @@
+const secret  = require('dotenv').config()
 const express = require('express');
 const MongoClient = require('mongodb').MongoClient;
-const url = process.env.MONGOLAB_URI || 'mongodb://localhost:27017/lienet';
+const url = process.env.MONGOLAB_URI ; 
 const app = express();
 const port = process.env.PORT || 6969;
 const querystring = require('querystring');
@@ -8,7 +9,9 @@ const cors = require('cors');
 const path = require('path');
 app.use(cors());
 app.use(express.json());
+
 app.get('/connect', (req, res) => {
+	
 	MongoClient.connect(url, function(err, db) {
 		if (!isNaN(req.query.num)) {
 			const dbo = db.db('lienet');
@@ -55,7 +58,7 @@ if (process.env.NODE_ENV === 'production') {
 
 	// Express serve up index.html file if it doesn't recognize route
 	app.get('*', (req, res) => {
-		console.log('chacted!!!!!!!!!!!!!!!!!!!!!!!!!That!');
+	
 		res.sendFile(path.resolve('client', 'public', 'index.html'));
 	});
 }
