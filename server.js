@@ -49,6 +49,29 @@ app.get('/titles', (req, res) => {
 		}
 	});
 });
+
+app.get('/comments', (req, res) => {
+	if (!isNaN(req.query.article)) {
+		let article = req.query.article;
+	MongoClient.connect(url, (err, db) => {
+		if (err) throw err;
+		else {
+			db
+				.db('lienet')
+				.collection('comments')
+				.find({article}, { projection: { id:1,userName:1,text: 1 } })
+				.toArray((err, result) => {
+					if (result) res.send(result);
+					else {
+						res.sendStatus(500);
+						console.timeLog(err);
+						throw err;
+					}
+				});
+		}
+	});
+}});
+
 if (process.env.NODE_ENV === 'production') {
 	// Serve any static files
 	app.use(express.static(path.join(__dirname, 'client/public/build'))).use(cors());

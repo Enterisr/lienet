@@ -2,31 +2,55 @@
   import { push, location } from "svelte-spa-router";
   $: display = "default display";
   $: title = "loading...";
-  async function GetArticle() {
+  let comments = [];
+  async function GetData(){
+    let originAddr = document.location.origin;
     let article = $location.slice(1);
     if (!isNaN(article)) {
-      let originAddr = document.location.origin;
+      
       if (window.location.href.includes("localhost")) {
         const uri = new URL(window.location.href);
         uri.port = "6969";
 
         originAddr = uri.origin;
       }
+    }
+    const data =  await Promise.all([GetArticle(originAddr,article),GetComments(originAddr,article)]);
+    let articleAndComments = {article:data[0],comments:data[1]};
+    console.log(articleAndComments);
+    return articleAndComments;
+  }
+  async function GetComments(originAddr,article){
+      return fetch(originAddr + "/comments?article=" + article)
+        .then(dat => {
+          console.log(dat);
+          return dat.json();
+        })
+        .then(dat => {
+          return dat;
+        })
+        .catch(err => {
+          alert(err);
+        });
+
+    }
+  
+  async function GetArticle(originAddr,article) {
+ 
       return fetch(originAddr + "/connect?num=" + article)
         .then(dat => {
           console.log(dat);
           return dat.json();
         })
         .then(dat => {
-          display = dat.text;
           title = dat.title;
-          return dat;
+          return dat; 
         })
         .catch(err => {
           alert(err);
         });
     }
-  }
+  
 
   export let title;
 </script>
@@ -51,7 +75,7 @@
     padding: 4vh;
     overflow: auto;
     max-height: 70vh;
-    max-width: 39vw;
+   
     text-align: center;
     margin: auto;
   }
@@ -96,6 +120,22 @@
       opacity: 0;
     }
   }
+  .zucced-button{
+    background-color: #3c579e;
+    background-repeat: no-repeat;
+    background-size: contain;
+    color: White;
+    border-radius: 30px;
+    margin: 1em;
+    padding-left: 2em;
+    transition: ease .3s all;
+    cursor: pointer;
+    background-image: url('https://i.ya-webdesign.com/images/facebook-icon-png-circle-4.png');
+  }
+  .zucced-button:hover{
+    box-shadow: 0px 0px 3px 3px #a0bbff;
+    
+  }
 </style>
 
 <div>
@@ -108,15 +148,25 @@
   </span>
   <h2 class="title-div">{title}</h2>
 </div>
-<article>
-  {#await GetArticle()}
+
+  {#await GetData()}
     <div class="lds-ripple">
       <div />
       <div />
     </div>
-  {:then display}
-    <div class="article-body">{display.text}</div>
+  {:then data}
+<article>
+    <div class="article-body">{data.article.text}</div>
+    </article>
+    <ol>
+    {#each data.comments as comment(comment.id)}
+      <li>
+      <span>{comment.userName}</span>
+      <p>{comment.text}</p>
+      </li>>
+      {/each}
+      </ol>
   {:catch error}
     <p style="color: red">{error.message}</p>
   {/await}
-</article>
+

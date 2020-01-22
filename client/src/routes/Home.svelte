@@ -62,12 +62,23 @@
     box-sizing: border-box;
 
   }
-  li:nth-child(odd) {
+  li:first-child{
+    font-size:2rem;
+    padding: 1.4em;
+    margin-bottom: 1em;
+  }
+   li:first-child img{
+    border-radius: 0;
+  
+  }
+  
+  li:nth-child(even) {
     background: rgb(85, 85, 255);
   }
-  li:nth-child(even) {
+  li:nth-child(odd) {
     background: rgb(255, 0, 0);
   }
+
   li > .img-div > img {
    border-radius: 30px;
     position: absolute;
@@ -87,9 +98,8 @@
     height: 100%;
   }
   .a-div {
-     max-width: 79%;
-    position: absolute;
-  
+     max-width: 80%;
+    position: absolute; 
     text-align: right;
     transform: translateY(-50%);
     top: 50%;
