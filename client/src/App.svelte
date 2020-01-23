@@ -43,7 +43,7 @@
   }
   h1 {
     font-size: 2em;
-    color: rgb(0, 195, 255);
+    color: rgb(255, 0, 0);
     font-family: "Tinos", serif;
   }
   @media screen and (max-width: 600px) {
