@@ -1,7 +1,7 @@
-const secret  = require('dotenv').config()
+const secret = require('dotenv').config();
 const express = require('express');
 const MongoClient = require('mongodb').MongoClient;
-const url = process.env.MONGOLAB_URI ; 
+const url = process.env.MONGOLAB_URI;
 const app = express();
 const port = process.env.PORT || 6969;
 const querystring = require('querystring');
@@ -11,7 +11,6 @@ app.use(cors());
 app.use(express.json());
 
 app.get('/connect', (req, res) => {
-	
 	MongoClient.connect(url, function(err, db) {
 		if (!isNaN(req.query.num)) {
 			const dbo = db.db('lienet');
@@ -51,26 +50,27 @@ app.get('/titles', (req, res) => {
 });
 
 app.get('/comments', (req, res) => {
-	if (!isNaN(req.query.article)) {
-		let article = req.query.article;
-	MongoClient.connect(url, (err, db) => {
-		if (err) throw err;
-		else {
-			db
-				.db('lienet')
-				.collection('comments')
-				.find({article}, { projection: { id:1,userName:1,text: 1 } })
-				.toArray((err, result) => {
-					if (result) res.send(result);
-					else {
-						res.sendStatus(500);
-						console.timeLog(err);
-						throw err;
-					}
-				});
-		}
-	});
-}});
+	let article = parseInt(req.query.article);
+	if (!isNaN(article)) {
+		MongoClient.connect(url, (err, db) => {
+			if (err) throw err;
+			else {
+				db
+					.db('lienet')
+					.collection('comments')
+					.find({ article: article }, { projection: { id: 1, userName: 1, text: 1 } })
+					.toArray((err, result) => {
+						if (result) res.send(result);
+						else {
+							res.sendStatus(500);
+							console.timeLog(err);
+							throw err;
+						}
+					});
+			}
+		});
+	}
+});
 
 if (process.env.NODE_ENV === 'production') {
 	// Serve any static files
@@ -81,7 +81,6 @@ if (process.env.NODE_ENV === 'production') {
 
 	// Express serve up index.html file if it doesn't recognize route
 	app.get('*', (req, res) => {
-	
 		res.sendFile(path.resolve('client', 'public', 'index.html'));
 	});
 }
