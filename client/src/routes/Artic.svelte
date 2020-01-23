@@ -1,12 +1,32 @@
 <script>
   import { push, location } from "svelte-spa-router";
+  let originAddr = document.location.origin;
+  let fetchAll = GetData;
+
   $: display = "default display";
   $: title = "loading...";
-  let comments = [];
-  let newcoomentorName = "סתם מישהו";
-  let newCommentText = "דעתי החשובה מאוד באשר לאיש הסגול";
+  $: comments = [];
+  let newComment = {
+    userName: "סתם מישהו",
+    text: "דעתי החשובה מאוד באשר לאיש הסגול",
+    article: parseInt($location.slice(1))
+  };
+
+  function SubmitComment() {
+    fetch(originAddr + "/postComment", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(newComment)
+    })
+      .then(dat => {
+        fetchAll = GetData;
+      })
+      .then(dat => {})
+      .catch(err => {
+        alert(err);
+      });
+  }
   async function GetData() {
-    let originAddr = document.location.origin;
     let article = $location.slice(1);
     if (!isNaN(article)) {
       if (window.location.href.includes("localhost")) {
@@ -52,7 +72,7 @@
         alert(err);
       });
   }
-  function SubmitCommnet() {}
+
   export let title;
 </script>
 
@@ -191,7 +211,7 @@
   <h2 class="title-div">{title}</h2>
 </div>
 
-{#await GetData()}
+{#await fetchAll()}
   <div class="lds-ripple">
     <div />
     <div />
@@ -202,18 +222,18 @@
       <div class="article-body">{data.article.text}</div>
     </article>
     <div class="newCommentDiv">
-      <input type="text" bind:value={newcoomentorName} />
+      <input type="text" bind:value={newComment.userName} />
       <textarea
-        bind:value={newCommentText}
-        onkeypress={event => {
+        bind:value={newComment.text}
+        on:keypress={event => {
           if (event.key == 'enter') {
-            SubmitCommnet();
+            SubmitComment();
           }
         }} />
-      <button onclick="SubmitCommnet">פרסם</button>
+      <button on:click={SubmitComment}>פרסם</button>
     </div>
     <ol class="comment-list-ol">
-      {#each data.comments as comment (comment.id)}
+      {#each data.comments as comment (comment.userName)}
         <li>
           <span class="comment-userName-span">{comment.userName}</span>
           <p>{comment.text}</p>

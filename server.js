@@ -71,7 +71,21 @@ app.get('/comments', (req, res) => {
 		});
 	}
 });
-
+app.post('/postComment', (req, res) => {
+	console.log(res);
+	MongoClient.connect(url, (err, db) => {
+		if (err) console.log(err);
+		else {
+			db.db('lienet').collection('comments').insertOne(req.body, (err, result) => {
+				if (err) throw err;
+				else {
+					db.close();
+					res.status(200).send(req.body);
+				}
+			});
+		}
+	});
+});
 if (process.env.NODE_ENV === 'production') {
 	// Serve any static files
 	app.use(express.static(path.join(__dirname, 'client/public/build'))).use(cors());
