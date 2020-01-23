@@ -115,6 +115,7 @@
   }
   .comment-list-ol {
     text-align: center;
+    padding: 0;
   }
   .comment-list-ol > li {
     max-width: 500px;
@@ -131,6 +132,7 @@
     justify-content: space-evenly;
     padding: 1em;
     margin: 1em auto;
+    max-width: 500px;
     box-shadow: -1px 0px 20px -17px;
   }
   .newCommentDiv > textarea {
@@ -138,7 +140,6 @@
     height: 5em;
     font-size: 0.9em;
     border: none;
-    background: rgba(255, 212, 212, 0.47);
   }
   .newCommentDiv > input {
     width: 10em;
