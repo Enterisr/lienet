@@ -59,6 +59,7 @@ app.get('/comments', (req, res) => {
 					.db('lienet')
 					.collection('comments')
 					.find({ article: article }, { projection: { id: 1, userName: 1, text: 1 } })
+					.sort({ _id: -1 })
 					.toArray((err, result) => {
 						if (result) res.send(result);
 						else {
@@ -76,7 +77,9 @@ app.post('/postComment', (req, res) => {
 	MongoClient.connect(url, (err, db) => {
 		if (err) console.log(err);
 		else {
-			db.db('lienet').collection('comments').insertOne(req.body, (err, result) => {
+			let comment = sanitize(req.body);
+
+			db.db('lienet').collection('comments').insertOne(comment, (err, result) => {
 				if (err) throw err;
 				else {
 					db.close();
@@ -100,3 +103,16 @@ if (process.env.NODE_ENV === 'production') {
 }
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));
 //TODO: change this to prod mode..
+
+function sanitize(v) {
+	if (v instanceof Object) {
+		for (var key in v) {
+			if (/^\$/.test(key)) {
+				delete v[key];
+			} else {
+				sanitize(v[key]);
+			}
+		}
+	}
+	return v;
+}
