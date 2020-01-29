@@ -38,7 +38,8 @@
   }
   .router-wrap {
     background: rgb(241, 238, 231);
-    height: 100%;
+    height: 95%;
+    overflow: auto;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.32), 0 1px 2px rgba(0, 0, 0, 0.24);
   }
   header {
