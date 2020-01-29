@@ -55,7 +55,7 @@
   }
 
   async function GetArticle() {
-    return fetch(originAddr + "/connect?num=" + article)
+    return fetch(originAddr + "/article?num=" + article)
       .then(dat => {
         console.log(dat);
         return dat.json();
@@ -86,6 +86,7 @@
     font-size: 1.5em;
     margin-bottom: 1em;
     padding: 0;
+    color: red;
   }
   .back-span {
     cursor: pointer;
@@ -136,6 +137,7 @@
     padding: 0;
     max-height: 10em;
     overflow: auto;
+    margin-bottom: 3em;
   }
   .comment-list-ol > li {
     max-width: 500px;
@@ -182,6 +184,10 @@
     border: solid 2px rgb(60, 202, 79);
     background: rgba(60, 202, 79, 0.2);
   }
+  .subTitle-p {
+    text-align: right;
+    margin: 1em;
+  }
   @keyframes lds-ripple {
     0% {
       top: 36px;
@@ -217,7 +223,7 @@
       <div />
     </div>
   {:then article}
-
+    <p class="subTitle-p">{article.subTitle}</p>
     <article>
       <div class="article-body">{article.text}</div>
     </article>

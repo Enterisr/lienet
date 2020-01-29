@@ -10,15 +10,15 @@ const path = require('path');
 app.use(cors());
 app.use(express.json());
 
-app.get('/connect', (req, res) => {
+app.get('/article', (req, res) => {
 	MongoClient.connect(url, function(err, db) {
 		if (!isNaN(req.query.num)) {
 			const dbo = db.db('lienet');
 			let requestedArticle = parseInt(req.query.num);
-			dbo.collection('articles').find({ id: requestedArticle }).toArray((err, resule) => {
+			dbo.collection('articles').findOne({ id: requestedArticle }, (err, resule) => {
 				if (err) throw err;
-				if (resule[0]) {
-					res.send(resule[0]);
+				if (resule) {
+					res.send(resule);
 				} else {
 					res.send({ id: '-1', text: '404' });
 				}

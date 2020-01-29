@@ -38,7 +38,7 @@
   }
   .router-wrap {
     background: rgb(241, 238, 231);
-
+    height: 100%;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.32), 0 1px 2px rgba(0, 0, 0, 0.24);
   }
   header {
@@ -47,7 +47,7 @@
     margin: 0;
   }
   header > h3 {
-    color: rgb(255, 0, 0);
+    color: black;
     max-height: 10vh;
     font-family: "Tinos", serif;
   }
@@ -58,6 +58,9 @@
   @media screen and (max-width: 600px) {
     .wrapper {
       max-width: 100vw;
+      margin: 0;
+      padding: 0;
+      max-height: none;
     }
     .yellowMail {
       display: none;

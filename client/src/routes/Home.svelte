@@ -12,7 +12,7 @@
   } from "svelte-spa-router";
   $: artics = [];
   GetTitles();
-  
+
   async function GetTitles() {
     let urlAddr = document.location.origin;
     if (window.location.href.includes("localhost")) {
@@ -33,8 +33,8 @@
       throw new Error(resJasoned);
     }
   }
-  function GenerateRandomNumber(){
-    return Math.floor((Math.random()*100)+1);
+  function GenerateRandomNumber() {
+    return Math.floor(Math.random() * 100 + 1);
   }
 </script>
 
@@ -44,12 +44,12 @@
     text-align: center;
     padding: 0;
     margin: 0;
-    max-height: 70vh;
+
     overflow: auto;
     border-radius: 0px 1em 1em 0em;
   }
   li {
- padding: 2em;
+    padding: 2em;
     font-size: 1em;
     margin: 1em;
     box-shadow: 0px 0px 8px -5px rgb(32, 121, 255);
@@ -60,18 +60,16 @@
     overflow: hidden;
     transition: 0.5s ease all;
     box-sizing: border-box;
-
   }
-  li:first-child{
-    font-size:2rem;
+  li:first-child {
+    font-size: 2rem;
     padding: 1.4em;
     margin-bottom: 1em;
   }
-   li:first-child img{
+  li:first-child img {
     border-radius: 0;
-  
   }
-  
+
   li:nth-child(even) {
     background: rgb(85, 85, 255);
   }
@@ -80,12 +78,13 @@
   }
 
   li > .img-div > img {
-   border-radius: 30px;
+    border-radius: 30px;
     position: absolute;
     /* margin: auto; */
     height: 3em;
     transform: translateY(-50%);
     top: 50%;
+    width: 3em;
   }
   li > .img-div {
     color: black;
@@ -98,8 +97,8 @@
     height: 100%;
   }
   .a-div {
-     max-width: 80%;
-    position: absolute; 
+    max-width: 70%;
+    position: absolute;
     text-align: right;
     transform: translateY(-50%);
     top: 50%;
@@ -109,22 +108,35 @@
     cursor: pointer;
     color: white;
     text-decoration: blink;
+    right: 0;
+    position: relative;
+    display: block;
   }
   li:hover {
     box-shadow: 0px 0px 10px 3px rgb(255, 126, 126);
+  }
+  @media screen and (max-width: 600px) {
+    ul {
+      max-height: none;
+      padding: 0;
+      margin: 0;
+    }
   }
 </style>
 
 <ul>
   {#each artics as artic (artic.id)}
     <li>
+
       <div class="img-div">
-        <img src="https://picsum.photos/{GenerateRandomNumber()}" alt="איש סגול רע" />
+
+        <img
+          src="https://source.unsplash.com/{GenerateRandomNumber()}x{GenerateRandomNumber()}/?politics,israel,holystate,netanyahu,usa,street,trump"
+          alt="איש סגול רע" />
       </div>
       <div class="a-div">
         <a href={'#/' + artic.id} title={artic.title}>{artic.title}</a>
       </div>
-
     </li>
   {/each}
 </ul>
