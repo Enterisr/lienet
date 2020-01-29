@@ -134,6 +134,8 @@
   .comment-list-ol {
     text-align: center;
     padding: 0;
+    max-height: 10em;
+    overflow: auto;
   }
   .comment-list-ol > li {
     max-width: 500px;

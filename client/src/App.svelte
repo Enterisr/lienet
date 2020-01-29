@@ -41,11 +41,20 @@
 
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.32), 0 1px 2px rgba(0, 0, 0, 0.24);
   }
-  h1 {
-    font-size: 2em;
+  header {
+    height: 10vh;
+    overflow: hidden;
+    margin: 0;
+  }
+  header > h3 {
     color: rgb(255, 0, 0);
+    max-height: 10vh;
     font-family: "Tinos", serif;
   }
+  h3 > img {
+    height: 6vh;
+  }
+
   @media screen and (max-width: 600px) {
     .wrapper {
       max-width: 100vw;
@@ -57,7 +66,13 @@
 </style>
 
 <div class="wrapper">
-  <h1>Lienet - עלילות הביבס בארץ הקודש</h1>
+  <header>
+    <h3>
+      <img alt="logo" src="././logo_transparent.png" />
+      <span>האמת. בלי בולשיט.</span>
+
+    </h3>
+  </header>
   <button
     onclick={() => {
       window.location.href = 'mailto:yourmom@ismy.babe?subject= יש לי חדשות לא מעניינות בשבילכם&body=אהמ אהמ';
