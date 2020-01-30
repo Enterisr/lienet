@@ -116,6 +116,15 @@
       margin: 0;
       padding: 0;
     }
+    .title-div {
+      font-size: 1.2em;
+      padding: 3px;
+      max-height: 1.2em;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      word-wrap: break-word;
+      white-space: nowrap;
+    }
   }
   .lds-ripple {
     display: inline-block;
@@ -141,8 +150,8 @@
   .comment-list-ol {
     text-align: center;
     padding: 0;
-    max-height: 10em;
     overflow: auto;
+    margin-bottom: 1em;
     margin-bottom: 3em;
   }
   .comment-list-ol > li {
@@ -275,6 +284,5 @@
       </li>
     {/each}
   </ol>
-  <span id="endOfComments" />
 
 </main>
