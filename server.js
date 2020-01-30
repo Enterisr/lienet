@@ -37,6 +37,7 @@ app.get('/titles', (req, res) => {
 				.db('lienet')
 				.collection('articles')
 				.find({}, { projection: { title: 1, id: 1 } })
+				.sort({ _id: -1 })
 				.toArray((err, result) => {
 					if (result) res.send(result);
 					else {
