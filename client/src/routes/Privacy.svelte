@@ -3,11 +3,20 @@
 </script>
 
 <style>
-
+  h1 {
+    background: yellow;
+    position: sticky;
+    top: 0;
+    margin: 0;
+  }
+  .privacy-div {
+    width: 600px;
+    margin: auto;
+  }
 </style>
 
-<h1>הפרטיות שלך חשובה לנו!</h1>
-<div class="">
+<h1>ה"פרטיות" שלך "חשובה" לנו!</h1>
+<div class="privacy-div">
   Lienet Privacy Policy This privacy policy ("policy") will help you understand
   how Lienet uses and protects the data you provide to us when you visit and use
   the website. What User Data We Collect When you visit the website, we may

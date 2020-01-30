@@ -60,7 +60,22 @@
   h3 > img {
     height: 6vh;
   }
-
+  .site-nav {
+    background: rgb(255, 255, 255);
+    font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS",
+      sans-serif;
+    font-size: 1.1em;
+  }
+  .site-nav a {
+    text-decoration: none;
+    color: red;
+  }
+  .site-nav a:hover {
+    font-weight: bold;
+  }
+  a::before {
+    content: "|";
+  }
   @media screen and (max-width: 600px) {
     .wrapper {
       max-width: 100vw;
@@ -74,12 +89,12 @@
   }
 </style>
 
-<button
-  on:click={() => {
-    push('/privacy');
-  }}>
-  פרטיות
-</button>
+<nav class="site-nav">
+  <a href="/" use:link>דף הבית</a>
+  <a href="/privacy" use:link>פרטיות</a>
+  <a href="/about" use:link>אודות</a>
+
+</nav>
 <div class="wrapper">
   <header>
     <h3>

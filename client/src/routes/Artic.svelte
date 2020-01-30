@@ -128,15 +128,16 @@
     }
   }
   .lds-ripple {
-    display: inline-block;
+    width: 100px;
+    height: 100px;
+    margin: auto;
     position: relative;
-    width: 80px;
-    height: 80px;
   }
   .lds-ripple div {
     position: absolute;
-    border: 4px solid #fff;
+    border: 4px solid rgb(223, 44, 44);
     opacity: 1;
+    text-align: center;
     border-radius: 50%;
     animation: lds-ripple 1s cubic-bezier(0, 0.2, 0.8, 1) infinite;
   }
@@ -218,19 +219,34 @@
   .start-section time {
     display: inline-block;
   }
+  .socialBar-div {
+    position: fixed;
+    top: 75vh;
+    left: 12vw;
+  }
   .get-zucced-button {
     border: none;
-    position: fixed;
     background-repeat: no-repeat;
     background-size: 2em;
-    top: 75vh;
     width: 2em;
-    left: 12vw;
     background-image: url(https://upload.wikimedia.org/wikipedia/commons/0/05/Facebook_Logo_%282019%29.png);
     height: 2em;
-    z-index: 100;
+    z-index: 2;
     border-radius: 30px;
     cursor: pointer;
+  }
+  @media screen and (max-width: 600px) {
+    .socialBar-div {
+      bottom: 0;
+      width: 80vw;
+      height: 5vh;
+      border-radius: 60px;
+      left: 0;
+      position: sticky;
+    }
+    main {
+      height: 75vh;
+    }
   }
   @keyframes lds-ripple {
     0% {
@@ -302,17 +318,18 @@
   </ol>
 
 </main>
-
-<div
-  class="get-zucced-button fb-share-button"
-  data-href="https://lieneteu.herokuapp.com/"
-  data-size="small">
-  <a
-    class="get-zucced-button share-btn"
-    href="https://www.facebook.com/sharer/sharer.php?app_id=491062121550142&sdk=joey&u={window.location.href}&display=popup&ref=plugin&src=share_button"
-    on:click={() => {
-      return !window.open(this.href, 'Facebook', 'width=640,height=580');
-    }}>
-    {''}
-  </a>
+<div class="socialBar-div">
+  <div
+    class="get-zucced-button fb-share-button"
+    data-href="https://lieneteu.herokuapp.com/"
+    data-size="small">
+    <a
+      class="get-zucced-button share-btn"
+      href="https://www.facebook.com/sharer/sharer.php?app_id=491062121550142&sdk=joey&u={window.location.href}&display=popup&ref=plugin&src=share_button"
+      on:click={() => {
+        return !window.open(this.href, 'Facebook', 'width=640,height=580');
+      }}>
+      {''}
+    </a>
+  </div>
 </div>
