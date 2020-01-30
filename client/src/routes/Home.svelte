@@ -43,9 +43,10 @@
     list-style: none;
     text-align: center;
     padding: 0;
-    margin: 0;
-
+    margin: 0 auto;
+    max-width: 50vw;
     overflow: auto;
+
     border-radius: 0px 1em 1em 0em;
   }
   li {
@@ -96,7 +97,7 @@
     text-align: left;
     height: 100%;
   }
-  .a-div {
+  .title-div {
     max-width: 70%;
     position: absolute;
     text-align: right;
@@ -104,7 +105,7 @@
     top: 50%;
   }
 
-  a {
+  .title-span {
     cursor: pointer;
     color: white;
     text-decoration: blink;
@@ -120,6 +121,7 @@
       max-height: none;
       padding: 0;
       margin: 0;
+      max-width: none;
     }
   }
 </style>
@@ -134,8 +136,14 @@
           src="https://source.unsplash.com/{GenerateRandomNumber()}x{GenerateRandomNumber()}/?politics,israel,holystate,netanyahu,usa,street,trump"
           alt="איש סגול רע" />
       </div>
-      <div class="a-div">
-        <a href={'#/' + artic.id} title={artic.title}>{artic.title}</a>
+      <div class="title-div">
+        <span
+          class="title-span"
+          href={'gref'}
+          on:click={() => push('/article=' + artic.id)}
+          title={artic.title}>
+          {artic.title}
+        </span>
       </div>
     </li>
   {/each}

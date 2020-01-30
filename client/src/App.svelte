@@ -1,7 +1,14 @@
 <script>
   import routes from "./routes";
-
   import Router from "svelte-spa-router";
+  import {
+    link,
+    push,
+    pop,
+    replace,
+    location,
+    querystring
+  } from "svelte-spa-router";
   function OpenMail() {}
 </script>
 
@@ -67,6 +74,12 @@
   }
 </style>
 
+<button
+  on:click={() => {
+    push('/privacy');
+  }}>
+  פרטיות
+</button>
 <div class="wrapper">
   <header>
     <h3>

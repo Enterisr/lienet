@@ -2,7 +2,8 @@
   import { push, location } from "svelte-spa-router";
   import moment from "moment";
   let originAddr = GetServerAdress();
-  let article = parseInt($location.slice(1));
+  let article = $location.slice($location.indexOf("=") + 1, $location.length);
+
   $: display = "default display";
   $: title = "loading...";
   let newComment = {
@@ -217,6 +218,20 @@
   .start-section time {
     display: inline-block;
   }
+  .get-zucced-button {
+    border: none;
+    position: fixed;
+    background-repeat: no-repeat;
+    background-size: 2em;
+    top: 75vh;
+    width: 2em;
+    left: 12vw;
+    background-image: url(https://upload.wikimedia.org/wikipedia/commons/0/05/Facebook_Logo_%282019%29.png);
+    height: 2em;
+    z-index: 100;
+    border-radius: 30px;
+    cursor: pointer;
+  }
   @keyframes lds-ripple {
     0% {
       top: 36px;
@@ -287,3 +302,8 @@
   </ol>
 
 </main>
+<button
+  class="get-zucced-button"
+  on:click={() => {
+    window.open('https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdevelopers.facebook.com%2Fdocs%2Fplugins%2F&amp;src=sdkpreparse');
+  }} />
