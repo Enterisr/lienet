@@ -307,7 +307,9 @@
     <article>
       <p class="subTitle-p">{article.subTitle}</p>
 
-      <div class="article-body">{article.text}</div>
+      <div class="article-body">
+        {@html article.text}
+      </div>
     </article>
   {:catch error}
     <p style="color: red">{error.message}</p>
