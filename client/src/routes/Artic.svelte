@@ -170,6 +170,7 @@
     padding: 1em;
     margin: 1em auto;
     max-width: 500px;
+    border-radius: 0.2em;
     background: #91a7a71f;
     border: 1px solid black;
     box-shadow: -1px 0px 20px -17px;
