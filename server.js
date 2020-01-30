@@ -1,7 +1,7 @@
 const secret = require('dotenv').config();
 const express = require('express');
 const MongoClient = require('mongodb').MongoClient;
-const url = process.env.MONGOLAB_URI;
+const dbUrl = process.env.MONGOLAB_URI;
 const app = express();
 const port = process.env.PORT || 6969;
 const querystring = require('querystring');
@@ -11,7 +11,7 @@ app.use(cors());
 app.use(express.json());
 
 app.get('/article', (req, res) => {
-	MongoClient.connect(url, function(err, db) {
+	MongoClient.connect(dbUrl, function(err, db) {
 		if (!isNaN(req.query.num)) {
 			const dbo = db.db('lienet');
 			let requestedArticle = parseInt(req.query.num);
@@ -30,7 +30,7 @@ app.get('/article', (req, res) => {
 	});
 });
 app.get('/titles', (req, res) => {
-	MongoClient.connect(url, (err, db) => {
+	MongoClient.connect(dbUrl, (err, db) => {
 		if (err) throw err;
 		else {
 			db
@@ -52,7 +52,7 @@ app.get('/titles', (req, res) => {
 app.get('/comments', (req, res) => {
 	let article = parseInt(req.query.article);
 	if (!isNaN(article)) {
-		MongoClient.connect(url, (err, db) => {
+		MongoClient.connect(dbUrl, (err, db) => {
 			if (err) throw err;
 			else {
 				db
@@ -74,7 +74,7 @@ app.get('/comments', (req, res) => {
 });
 app.post('/postComment', (req, res) => {
 	console.log(res);
-	MongoClient.connect(url, (err, db) => {
+	MongoClient.connect(dbUrl, (err, db) => {
 		if (err) console.log(err);
 		else {
 			let comment = sanitize(req.body);

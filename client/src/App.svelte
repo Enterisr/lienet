@@ -8,12 +8,11 @@
 <style>
   @import url("https://fonts.googleapis.com/css?family=Tinos&display=swap");
   .wrapper {
-    background: rgb(248, 247, 247);
     padding: 1em;
     height: 100%;
     max-width: 70vw;
-    text-align: center;
     margin: 0;
+    background: rgb(250, 252, 252);
     overflow: hidden;
     padding: 1em;
     margin: auto;
@@ -37,10 +36,9 @@
     }
   }
   .router-wrap {
-    background: rgb(241, 238, 231);
     height: 95%;
     overflow: auto;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.32), 0 1px 2px rgba(0, 0, 0, 0.24);
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
   }
   header {
     height: 10vh;

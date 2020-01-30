@@ -1,12 +1,13 @@
 <script>
   import { push, location } from "svelte-spa-router";
+  import moment from "moment";
   let originAddr = GetServerAdress();
   let article = parseInt($location.slice(1));
   $: display = "default display";
   $: title = "loading...";
   let newComment = {
-    userName: "סתם מישהו",
-    text: "דעתי החשובה מאוד באשר לאיש הסגול",
+    userName: "פלוני",
+    text: "דעתי המשמעותית בנוגע לעניינים שאיני מבין בהם",
     article
   };
   $: comments = [];
@@ -78,7 +79,6 @@
   main {
     overflow: auto;
     max-height: 80vh;
-    text-align: center;
   }
   .title-div {
     position: relative;
@@ -86,21 +86,27 @@
     font-size: 1.5em;
     margin-bottom: 1em;
     padding: 0;
-    color: red;
+    color: white;
+    background: #ff6d6d;
+    padding: 1em;
+    margin-top: 0;
   }
   .back-span {
     cursor: pointer;
     text-align: left;
     margin: 0;
     font-size: 1.5em;
-    display: block;
+    position: absolute;
+    z-index: 3;
+    left: 0px;
+    top: 0;
   }
   .article-body {
     background: white;
-    padding: 5vh;
-
+    padding: 1em;
     text-align: center;
     margin: auto;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
   }
   @media screen and (max-width: 700px) {
     .article-body {
@@ -155,6 +161,8 @@
     padding: 1em;
     margin: 1em auto;
     max-width: 500px;
+    background: #91a7a71f;
+    border: 1px solid black;
     box-shadow: -1px 0px 20px -17px;
   }
   .newCommentDiv > textarea {
@@ -187,6 +195,17 @@
   .subTitle-p {
     text-align: right;
     margin: 1em;
+    color: grey;
+  }
+  .start-section {
+    text-align: right;
+    background: #f3f3f3;
+    padding: 0.2em;
+    border: 1px solid #b9b9b9;
+    border-radius: 4px;
+  }
+  .start-section time {
+    display: inline-block;
   }
   @keyframes lds-ripple {
     0% {
@@ -223,8 +242,14 @@
       <div />
     </div>
   {:then article}
-    <p class="subTitle-p">{article.subTitle}</p>
+    <div class="start-section">
+      <time>{moment(article.time).format('DD/MM/YYYY [בשעה] HH:MM')}</time>
+      <div class="author-p">{article.author}</div>
+    </div>
+
     <article>
+      <p class="subTitle-p">{article.subTitle}</p>
+
       <div class="article-body">{article.text}</div>
     </article>
   {:catch error}
