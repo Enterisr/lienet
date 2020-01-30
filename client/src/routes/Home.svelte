@@ -118,7 +118,7 @@
   }
   @media screen and (max-width: 600px) {
     ul {
-      max-height: none;
+      max-height: 80vh;
       padding: 0;
       margin: 0;
       max-width: none;
