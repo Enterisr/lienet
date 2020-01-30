@@ -260,7 +260,7 @@
       position: sticky;
     }
     main {
-      height: 65vh;
+      height: 75vh;
     }
   }
   @keyframes lds-ripple {
@@ -289,9 +289,10 @@
     }}>
     🔙
   </span>
-  <h2 class="title-div">{title}</h2>
 </div>
 <main>
+  <h2 class="title-div">{title}</h2>
+
   {#await GetArticle()}
     <div class="lds-ripple">
       <div />
@@ -336,14 +337,16 @@
 <div class="socialBar-div">
 
   <a
+    target="_blank"
     href="https://twitter.com/intent/tweet?url={encodeURIComponent(window.location.href)}"
     rel="nofollow noreferrer">
     <button class="twitter-button" />
   </a>
 
   <a
-    class=" share-btn"
+    class="share-btn"
     rel="nofollow noreferrer"
+    target="_blank"
     href="https://www.facebook.com/sharer/sharer.php?app_id=491062121550142&sdk=joey&u={window.location.href}&display=popup&ref=plugin&src=share_button">
     <button
       class="get-zucced-button"
