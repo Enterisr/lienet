@@ -222,30 +222,45 @@
   .socialBar-div {
     position: fixed;
     top: 75vh;
-    left: 12vw;
+
+    left: 0;
+    display: flex;
+    flex-direction: row;
+    margin: 2vw;
   }
-  .get-zucced-button {
+  .socialBar-div button {
     border: none;
     background-repeat: no-repeat;
     background-size: 2em;
-    width: 2em;
-    background-image: url(https://upload.wikimedia.org/wikipedia/commons/0/05/Facebook_Logo_%282019%29.png);
-    height: 2em;
+    width: 3em;
+    height: 3em;
     z-index: 2;
     border-radius: 30px;
-    cursor: pointer;
+    background-position: center;
+    cursor: pointer !important;
+    background-color: inherit;
+  }
+  .get-zucced-button {
+    background-image: url(https://upload.wikimedia.org/wikipedia/commons/0/05/Facebook_Logo_%282019%29.png);
+  }
+
+  .twitter-button {
+    background-image: url(https://upload.wikimedia.org/wikipedia/he/thumb/a/a3/Twitter_bird_logo.svg/1259px-Twitter_bird_logo.svg.png);
   }
   @media screen and (max-width: 600px) {
     .socialBar-div {
       bottom: 0;
-      width: 80vw;
+      width: 100vw;
       height: 5vh;
       border-radius: 60px;
       left: 0;
+      justify-content: center;
+      top: 0;
+      margin: 0;
       position: sticky;
     }
     main {
-      height: 75vh;
+      height: 65vh;
     }
   }
   @keyframes lds-ripple {
@@ -319,17 +334,22 @@
 
 </main>
 <div class="socialBar-div">
-  <div
-    class="get-zucced-button fb-share-button"
-    data-href="https://lieneteu.herokuapp.com/"
-    data-size="small">
-    <a
-      class="get-zucced-button share-btn"
-      href="https://www.facebook.com/sharer/sharer.php?app_id=491062121550142&sdk=joey&u={window.location.href}&display=popup&ref=plugin&src=share_button"
+
+  <a
+    href="https://twitter.com/intent/tweet?url={encodeURIComponent(window.location.href)}"
+    rel="nofollow noreferrer">
+    <button class="twitter-button" />
+  </a>
+
+  <a
+    class=" share-btn"
+    rel="nofollow noreferrer"
+    href="https://www.facebook.com/sharer/sharer.php?app_id=491062121550142&sdk=joey&u={window.location.href}&display=popup&ref=plugin&src=share_button">
+    <button
+      class="get-zucced-button"
       on:click={() => {
         return !window.open(this.href, 'Facebook', 'width=640,height=580');
-      }}>
-      {''}
-    </a>
-  </div>
+      }} />
+  </a>
+
 </div>
