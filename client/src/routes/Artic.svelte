@@ -302,8 +302,17 @@
   </ol>
 
 </main>
-<button
-  class="get-zucced-button"
-  on:click={() => {
-    window.open('https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdevelopers.facebook.com%2Fdocs%2Fplugins%2F&amp;src=sdkpreparse');
-  }} />
+
+<div
+  class="get-zucced-button fb-share-button"
+  data-href="https://lieneteu.herokuapp.com/"
+  data-size="small">
+  <a
+    class="get-zucced-button share-btn"
+    href="https://www.facebook.com/sharer/sharer.php?app_id=491062121550142&sdk=joey&u={window.location.href}&display=popup&ref=plugin&src=share_button"
+    on:click={() => {
+      return !window.open(this.href, 'Facebook', 'width=640,height=580');
+    }}>
+    {''}
+  </a>
+</div>
