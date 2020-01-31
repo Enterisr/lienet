@@ -262,8 +262,7 @@
       padding: 0;
       position: sticky;
     }
-    .socialBar-div > a {
-    }
+
     main {
       max-height: 75vh;
     }
