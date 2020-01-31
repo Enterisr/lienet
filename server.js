@@ -7,6 +7,8 @@ const port = process.env.PORT || 6969;
 const querystring = require('querystring');
 const cors = require('cors');
 const path = require('path');
+const compression = require('compression');
+app.use(compression());
 app.use(cors());
 app.use(express.json());
 
