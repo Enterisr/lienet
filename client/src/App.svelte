@@ -86,6 +86,15 @@
     .yellowMail {
       display: none;
     }
+    header {
+      height: fit-content;
+    }
+    nav {
+      margin: 1vh;
+    }
+    h3 {
+      margin: 0;
+    }
   }
 </style>
 

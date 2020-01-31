@@ -154,7 +154,6 @@
     padding: 0;
     overflow: auto;
     margin-bottom: 1em;
-    margin-bottom: 3em;
   }
   .comment-list-ol > li {
     max-width: 500px;
@@ -248,19 +247,44 @@
     background-image: url(https://upload.wikimedia.org/wikipedia/he/thumb/a/a3/Twitter_bird_logo.svg/1259px-Twitter_bird_logo.svg.png);
   }
   @media screen and (max-width: 600px) {
+    * {
+      overflow-x: hidden;
+      scroll-behavior: smooth;
+      overflow-y: none;
+    }
     .socialBar-div {
       bottom: 0;
       width: 100vw;
-      height: 5vh;
-      border-radius: 60px;
+      height: 10vh;
       left: 0;
       justify-content: center;
-      top: 0;
-      margin: 0;
+      margin-bottom: 10vh;
+      padding: 0;
       position: sticky;
     }
+    .socialBar-div > a {
+    }
     main {
-      height: 75vh;
+      max-height: 75vh;
+    }
+    .start-section {
+      margin: 0;
+      padding: 0;
+    }
+    .subTitle-p {
+      margin: 1vh;
+      padding: 0;
+    }
+    .comment-list-ol {
+      margin-bottom: 0;
+    }
+    .newCommentDiv {
+      padding: 1vh;
+    }
+  }
+  @media screen and (max-height: 600px) {
+    main {
+      max-height: 70vh;
     }
   }
   @keyframes lds-ripple {

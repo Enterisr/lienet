@@ -56,7 +56,7 @@
     box-shadow: 0px 0px 8px -5px rgb(32, 121, 255);
     height: 10vh;
     background-color: rgba(153, 153, 153, 0.76);
-    color: black !important;
+
     position: relative;
     overflow: hidden;
     transition: 0.5s ease all;
@@ -100,6 +100,7 @@
   .title-div {
     max-width: 70%;
     position: absolute;
+
     text-align: right;
     transform: translateY(-50%);
     top: 50%;
@@ -139,7 +140,7 @@
       <div class="title-div">
         <span
           class="title-span"
-          href={'gref'}
+          href={'...'}
           on:click={() => push('/article=' + artic.id)}
           title={artic.title}>
           {artic.title}
