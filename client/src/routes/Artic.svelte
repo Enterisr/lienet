@@ -221,11 +221,19 @@
   .socialBar-div {
     position: fixed;
     top: 75vh;
-
     left: 0;
     display: flex;
     flex-direction: row;
     margin: 2vw;
+    flex-direction: column;
+    transition: all ease 0.4s;
+
+    border-radius: 30px;
+    background: #f7f7f7;
+    box-shadow: 0px 0px 0px 2px #c9ebff;
+  }
+  .socialBar-div:hover {
+    box-shadow: 0px 0px 0px 2px #c9ebff, 0px 0px 0px 5px #60baee79;
   }
   .socialBar-div button {
     border: none;
@@ -261,6 +269,7 @@
       margin-bottom: 10vh;
       padding: 0;
       position: sticky;
+      flex-direction: row;
     }
 
     main {

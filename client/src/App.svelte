@@ -9,7 +9,12 @@
     location,
     querystring
   } from "svelte-spa-router";
-  function OpenMail() {}
+  import Modal from "svelte-simple-modal";
+  import { getContext } from "svelte";
+  import { fly } from "svelte/transition";
+
+  import SignIn from "./routes/SignIn.svelte";
+  let toShowSignInModal = false;
 </script>
 
 <style>
@@ -76,6 +81,46 @@
   a::before {
     content: "|";
   }
+  .modal-background {
+    background-color: rgba(111, 111, 111, 0.38);
+    width: 100vw;
+    height: 100vh;
+    z-index: 4;
+    top: 0;
+    left: 0;
+    position: absolute;
+    justify-items: center;
+  }
+  .blur {
+    filter: blur(6px);
+  }
+  .popup {
+    background: white;
+    border: solid black 3px;
+    border-radius: 30px;
+    width: 40%;
+    margin: auto;
+    top: 40%;
+    position: relative;
+    transform: translateY(-50%);
+  }
+  .popup-exit-button {
+    background: none;
+    color: red;
+    position: absolute;
+    cursor: pointer;
+    font-weight: 500;
+    margin: 0px;
+    padding: 0;
+    top: 5px;
+    width: 1em;
+    right: 10px;
+    font-size: 1em;
+    height: 1em;
+    line-height: 0;
+    border: none;
+    font-family: cursive;
+  }
   @media screen and (max-width: 600px) {
     .wrapper {
       max-width: 100vw;
@@ -102,9 +147,18 @@
   <a href="/" use:link>דף הבית</a>
   <a href="/privacy" use:link>פרטיות</a>
   <a href="/about" use:link>אודות</a>
+  <a
+    on:click={() => {
+      toShowSignInModal = true;
+    }}
+    href="/#">
+    התחברות
+  </a>
 
 </nav>
-<div class="wrapper">
+
+<div class={toShowSignInModal ? 'wrapper blur' : 'wrapper'}>
+
   <header>
     <h3>
       <img alt="logo" src="././logo_transparent.png" />
@@ -120,8 +174,28 @@
     class="yellowMail">
     המייל הצהוב!
   </button>
+
   <div class="router-wrap">
 
     <Router {routes} />
   </div>
 </div>
+{#if toShowSignInModal}
+  <div transition:fly={{ duration: 300 }} class="modal-background">
+    <div transition:fly={{ y: 200, duration: 300 }} class="popup">
+      <button
+        class="popup-exit-button"
+        on:click={() => {
+          toShowSignInModal = false;
+        }}>
+        x
+      </button>
+      <SignIn
+        CloseModal={() => {
+          toShowSignInModal = false;
+        }}
+        isRegister={false} />
+
+    </div>
+  </div>
+{/if}

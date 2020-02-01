@@ -8,6 +8,11 @@ const querystring = require('querystring');
 const cors = require('cors');
 const path = require('path');
 const compression = require('compression');
+const bcrypt = require('bcrypt');
+const utils = require('./utils');
+
+const saltRounds = 10;
+
 app.use(compression());
 app.use(cors());
 app.use(express.json());
@@ -76,11 +81,10 @@ app.get('/comments', (req, res) => {
 	}
 });
 app.post('/postComment', (req, res) => {
-	console.log(res);
 	MongoClient.connect(dbUrl, (err, db) => {
 		if (err) console.log(err);
 		else {
-			let comment = sanitize(req.body);
+			let comment = utils.sanitize(req.body);
 
 			db.db('lienet').collection('comments').insertOne(comment, (err, result) => {
 				if (err) throw err;
@@ -91,6 +95,56 @@ app.post('/postComment', (req, res) => {
 			});
 		}
 	});
+});
+app.post('/Register', (req, res) => {
+	//TODO://callback hell
+	try {
+		let { mail, password } = utils.sanitize(req.body);
+		bcrypt.hash(password, saltRounds, (err, hash) => {
+			if (err) throw err;
+			MongoClient.connect(dbUrl, (err, db) => {
+				if (err) throw err;
+				else {
+					db.db('lienet').collection('authors').insertOne({ mail, password: hash }, (err, result) => {
+						if (err) throw err;
+						else {
+							db.close();
+							res.send(true);
+						}
+					});
+				}
+			});
+		});
+	} catch (err) {
+		console.error(err);
+		res.status(500).send('the registretion failed :( maybe you should go cry in the corner, alone');
+	}
+});
+app.post('/signIn', (req, res) => {
+	//TODO://callback hell
+
+	try {
+		let { mail, password: enteredPassword } = utils.sanitize(req.body);
+		MongoClient.connect(dbUrl, (err, db) => {
+			if (err) throw err;
+			else {
+				db.db('lienet').collection('authors').findOne({ mail }, (err, userFromDb) => {
+					if (err) throw err;
+					else {
+						bcrypt.compare(enteredPassword, userFromDb.password, function(err, HashCompareRes) {
+							if (err) throw err;
+							else {
+								res.send(HashCompareRes);
+							}
+						});
+					}
+				});
+			}
+		});
+	} catch (err) {
+		console.error(err);
+		res.status(500).send('the signIn failed :( maybe you should go cry in the corner, alone');
+	}
 });
 if (process.env.NODE_ENV === 'production') {
 	// Serve any static files
@@ -106,16 +160,3 @@ if (process.env.NODE_ENV === 'production') {
 }
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));
 //TODO: change this to prod mode..
-
-function sanitize(v) {
-	if (v instanceof Object) {
-		for (var key in v) {
-			if (/^\$/.test(key)) {
-				delete v[key];
-			} else {
-				sanitize(v[key]);
-			}
-		}
-	}
-	return v;
-}
