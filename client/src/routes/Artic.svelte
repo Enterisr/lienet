@@ -247,6 +247,9 @@
   .twitter-button {
     background-image: url(https://upload.wikimedia.org/wikipedia/he/thumb/a/a3/Twitter_bird_logo.svg/1259px-Twitter_bird_logo.svg.png);
   }
+  .whatsapp-button-get-zucced-again {
+    background-image: url(https://cdn3.iconfinder.com/data/icons/2018-social-media-logotypes/1000/2018_social_media_popular_app_logo-whatsapp-512.png);
+  }
   @media screen and (max-width: 600px) {
     * {
       overflow-x: hidden;
@@ -384,6 +387,13 @@
       on:click={() => {
         return !window.open(this.href, 'Facebook', 'width=640,height=580');
       }} />
+  </a>
+
+  <a
+    target="_blank"
+    href="https://api.whatsapp.com/send?text=%20{encodeURIComponent(window.location.href)}"
+    rel="nofollow noreferrer">
+    <button class="whatsapp-button-get-zucced-again" />
   </a>
 
 </div>

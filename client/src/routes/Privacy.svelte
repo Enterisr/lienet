@@ -5,7 +5,7 @@
 <style>
   h1 {
     background: yellow;
-    position: sticky;
+    position: relative;
     top: 0;
     margin: 0;
   }

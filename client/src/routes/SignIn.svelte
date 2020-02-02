@@ -22,8 +22,15 @@
       let ansJsoned = await answer.json();
       serverResponse = ansJsoned.isSinged ? true : false;
       if (ansJsoned.isSinged) {
-        window.localStorage.setItem("token", ansJsoned.token);
-        window.location.href = "/admin";
+        localStorage.setItem("auth", JSON.stringify(answer));
+        /*await fetch(originAddr + "/admin", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            authorization: ansJsoned.token
+          }
+        });*/
+        window.location.href = "/admin?authorization=" + ansJsoned.token;
       }
     }
     isTriedToConnect = true;

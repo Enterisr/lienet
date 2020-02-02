@@ -86,8 +86,8 @@ app.post('/postComment', (req, res) => {
 		if (err) console.log(err);
 		else {
 			let comment = utils.sanitize(req.body);
-
-			db.db('lienet').collection('comments').insertOne(comment, (err, result) => {
+			let commentArticleParsed = { ...comment, article: parseInt(comment.article) };
+			db.db('lienet').collection('comments').insertOne(commentArticleParsed, (err, result) => {
 				if (err) throw err;
 				else {
 					db.close();
@@ -156,8 +156,11 @@ app.post('/signIn', (req, res) => {
 if (process.env.NODE_ENV === 'production') {
 	app.get('/admin', utils.ensureToken, (req, res, next) => {
 		//todo:this.
+		app.use(express.static(path.join(__dirname, 'client/adminPage'))).use(cors());
+		app.use(express.static(path.join(__dirname, 'client/adminPage')));
+
 		app.use(express.static('client/adminPage'));
-		res.sendFile(path.resolve('client', 'adminPage', 'admin.HMTL'));
+		res.sendFile(path.resolve('client', 'adminPage', 'admin.html'));
 	});
 	// Serve any static files
 	app.use(express.static(path.join(__dirname, 'client/public/build'))).use(cors());

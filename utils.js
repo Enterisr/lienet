@@ -18,10 +18,8 @@ let utils = {
 		return arr[rnd];
 	},
 	ensureToken: function ensureToken(req, res, next) {
-		var bearerHeader = req.headers['authorization'];
-		if (typeof bearerHeader !== 'undefined') {
-			const bearer = bearerHeader.split(' ');
-			const bearerToken = bearer[1];
+		const bearerToken = req.query['authorization'];
+		if (typeof bearerToken !== 'undefined') {
 			jwt.verify(bearerToken, process.env.JWT_SECRET, (err, result) => {
 				if (err) {
 					res.status(403).send('not authed!');
