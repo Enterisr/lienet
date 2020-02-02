@@ -10,6 +10,7 @@ const path = require('path');
 const compression = require('compression');
 const bcrypt = require('bcrypt');
 const utils = require('./utils');
+var jwt = require('jsonwebtoken');
 
 const saltRounds = 10;
 
@@ -99,13 +100,13 @@ app.post('/postComment', (req, res) => {
 app.post('/Register', (req, res) => {
 	//TODO://callback hell
 	try {
-		let { mail, password } = utils.sanitize(req.body);
-		bcrypt.hash(password, saltRounds, (err, hash) => {
+		let author = utils.sanitize(req.body);
+		bcrypt.hash(author.password, saltRounds, (err, hash) => {
 			if (err) throw err;
 			MongoClient.connect(dbUrl, (err, db) => {
 				if (err) throw err;
 				else {
-					db.db('lienet').collection('authors').insertOne({ mail, password: hash }, (err, result) => {
+					db.db('lienet').collection('authors').insertOne({ ...author, password: hash }, (err, result) => {
 						if (err) throw err;
 						else {
 							db.close();
@@ -130,11 +131,16 @@ app.post('/signIn', (req, res) => {
 			else {
 				db.db('lienet').collection('authors').findOne({ mail }, (err, userFromDb) => {
 					if (err) throw err;
-					else {
+					else if (userFromDb == null) {
+						res.send(false);
+					} else {
 						bcrypt.compare(enteredPassword, userFromDb.password, function(err, HashCompareRes) {
-							if (err) throw err;
-							else {
-								res.send(HashCompareRes);
+							if (HashCompareRes) {
+								jwt.sign({ mail }, process.env.JWT_SECRET, (err, token) => {
+									res.send({ isSinged: true, token });
+								});
+							} else {
+								res.send(false);
 							}
 						});
 					}
@@ -146,6 +152,11 @@ app.post('/signIn', (req, res) => {
 		res.status(500).send('the signIn failed :( maybe you should go cry in the corner, alone');
 	}
 });
+app.get('/admin', utils.ensureToken, (req, res, next) => {
+	//todo:this.
+	utils.ensureToken(req, res, next);
+	res.sendFile(path.resolve('client', 'public', 'index.html'));
+});
 if (process.env.NODE_ENV === 'production') {
 	// Serve any static files
 	app.use(express.static(path.join(__dirname, 'client/public/build'))).use(cors());
@@ -154,6 +165,7 @@ if (process.env.NODE_ENV === 'production') {
 	app.use(express.static(path.join(__dirname, 'client/public')));
 
 	// Express serve up index.html file if it doesn't recognize route
+
 	app.get('*', (req, res) => {
 		res.sendFile(path.resolve('client', 'public', 'index.html'));
 	});

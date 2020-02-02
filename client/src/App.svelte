@@ -140,6 +140,9 @@
     h3 {
       margin: 0;
     }
+    .popup {
+      width: 95%;
+    }
   }
 </style>
 
@@ -152,7 +155,7 @@
       toShowSignInModal = true;
     }}
     href="/#">
-    התחברות
+    כניסת כתבים
   </a>
 
 </nav>

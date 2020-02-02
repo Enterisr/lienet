@@ -1,21 +1,15 @@
 <script>
+  import Utils from "../Utils.js";
   export let isRegister;
   export let CloseModal;
   $: formData = { mail: "", password: "" };
-  $: errorMessage = "";
-  let originAddr = GetServerAdress();
-  function GetServerAdress() {
-    if (window.location.href.includes("localhost")) {
-      const uri = new URL(window.location.href);
-      uri.port = "6969";
-      return uri.origin;
-    } else {
-      return document.location.origin;
-    }
-  }
+  $: serverResponse = "";
+
+  let isTriedToConnect = false;
+  let originAddr = Utils.GetServerAdress();
+
   async function SubmitForm(e) {
     e.preventDefault();
-    console.table(formData);
     const request = isRegister ? "/Register" : "/SignIn";
     let answer = await fetch(originAddr + request, {
       method: "POST",
@@ -24,7 +18,11 @@
     });
     if (!answer || answer.status == 500) {
       errorMessage = answer;
+    } else {
+      let ansTexted = await answer.text();
+      serverResponse = ansTexted == "true" ? true : false;
     }
+    isTriedToConnect = true;
   }
 </script>
 
@@ -52,6 +50,13 @@
     cursor: pointer;
     margin: 0.5em auto;
   }
+  .sucsess {
+    background: rgb(98, 226, 98);
+  }
+  .fail {
+    background: red;
+    color: white;
+  }
 </style>
 
 {#if isRegister}
@@ -61,20 +66,35 @@
 {/if}
 
 <form>
+  {#if isRegister}
+    <label>שם פרטי</label>
+    <input bind:value={formData.firstName} type="text" />
+    <label>שם משפחה</label>
+    <input bind:value={formData.lastName} type="text" />
+  {/if}
   <label>מייל</label>
   <input bind:value={formData.mail} type="email" />
   <label>סיסמה</label>
   <input bind:value={formData.password} type="password" />
-  <button on:click={SubmitForm}>תכניס אותי</button>
+
+  <button on:click={SubmitForm}>{isRegister ? 'הרשמה' : 'התחברות'}</button>
+  {#if isTriedToConnect}
+    <div
+      class={serverResponse ? 'serverResponse-div sucsess' : 'serverResponse-div fail'}>
+      {serverResponse ? 'התחברת בהצלחה' : 'מייל או ססמה לא נכונים'}
+    </div>
+  {/if}
   {#if !isRegister}
     <span>
       אין לך משתמש עדיין?
       <button
         on:click={() => {
           isRegister = true;
+          isTriedToConnect = false;
         }}>
         הירשם כאן
       </button>
     </span>
   {/if}
+
 </form>

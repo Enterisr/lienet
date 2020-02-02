@@ -1,7 +1,9 @@
 <script>
   import { push, location } from "svelte-spa-router";
   import moment from "moment";
-  let originAddr = GetServerAdress();
+  import Utils from "../Utils.js";
+
+  let originAddr = Utils.GetServerAdress();
   let article = $location.slice($location.indexOf("=") + 1, $location.length);
 
   $: display = "default display";
@@ -13,15 +15,6 @@
   };
   $: comments = [];
 
-  function GetServerAdress() {
-    if (window.location.href.includes("localhost")) {
-      const uri = new URL(window.location.href);
-      uri.port = "6969";
-      return uri.origin;
-    } else {
-      return document.location.origin;
-    }
-  }
   function SubmitComment() {
     fetch(originAddr + "/postComment", {
       method: "POST",
@@ -263,12 +256,16 @@
     .socialBar-div {
       bottom: 0;
       width: 100vw;
-      height: 10vh;
+      height: 3.5em;
       left: 0;
       justify-content: center;
       margin-bottom: 10vh;
       padding: 0;
       position: sticky;
+      box-shadow: none;
+      border: none;
+      border-radius: 0px;
+      background: #c9ebff;
       flex-direction: row;
     }
 

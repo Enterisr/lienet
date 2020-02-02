@@ -1,3 +1,4 @@
+const jwt = require('jsonwebtoken');
 let utils = {
 	//sanitize user input before tocuing the db..
 	sanitize: function sanitize(v) {
@@ -15,6 +16,21 @@ let utils = {
 	selectRandomFromArray: function selectRandomFromArray(arr) {
 		const rnd = Math.floor(Math.random() * arr.length);
 		return arr[rnd];
+	},
+	ensureToken: function ensureToken(req, res, next) {
+		if (typeof bearerHeader !== 'undefined') {
+			const bearer = bearerHeader.split(' ');
+			const bearerToken = bearer[1];
+			jwt.verify(bearerToken, process.env.JWT_SECRET, (err, result) => {
+				if (err) {
+					res.status(403).send('not authed!');
+				} else {
+					next();
+				}
+			});
+		} else {
+			res.send(403).send('not authed!');
+		}
 	}
 };
 module.exports = utils;
