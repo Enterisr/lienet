@@ -18,6 +18,7 @@ let utils = {
 		return arr[rnd];
 	},
 	ensureToken: function ensureToken(req, res, next) {
+		var bearerHeader = req.headers['authorization'];
 		if (typeof bearerHeader !== 'undefined') {
 			const bearer = bearerHeader.split(' ');
 			const bearerToken = bearer[1];

@@ -19,8 +19,12 @@
     if (!answer || answer.status == 500) {
       errorMessage = answer;
     } else {
-      let ansTexted = await answer.text();
-      serverResponse = ansTexted == "true" ? true : false;
+      let ansJsoned = await answer.json();
+      serverResponse = ansJsoned.isSinged ? true : false;
+      if (ansJsoned.isSinged) {
+        window.localStorage.setItem("token", ansJsoned.token);
+        window.location.href = "/admin";
+      }
     }
     isTriedToConnect = true;
   }

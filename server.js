@@ -132,15 +132,15 @@ app.post('/signIn', (req, res) => {
 				db.db('lienet').collection('authors').findOne({ mail }, (err, userFromDb) => {
 					if (err) throw err;
 					else if (userFromDb == null) {
-						res.send(false);
+						res.send({ isSinged: false, token: null });
 					} else {
 						bcrypt.compare(enteredPassword, userFromDb.password, function(err, HashCompareRes) {
 							if (HashCompareRes) {
-								jwt.sign({ mail }, process.env.JWT_SECRET, (err, token) => {
+								jwt.sign({ mail }, process.env.JWT_SECRET, { expiresIn: 60 * 60 }, (err, token) => {
 									res.send({ isSinged: true, token });
 								});
 							} else {
-								res.send(false);
+								res.send({ isSinged: false, token: null });
 							}
 						});
 					}
@@ -152,21 +152,22 @@ app.post('/signIn', (req, res) => {
 		res.status(500).send('the signIn failed :( maybe you should go cry in the corner, alone');
 	}
 });
-app.get('/admin', utils.ensureToken, (req, res, next) => {
-	//todo:this.
-	utils.ensureToken(req, res, next);
-	res.sendFile(path.resolve('client', 'public', 'index.html'));
-});
+
 if (process.env.NODE_ENV === 'production') {
+	app.get('/admin', utils.ensureToken, (req, res, next) => {
+		//todo:this.
+		app.use(express.static('client/adminPage'));
+		res.sendFile(path.resolve('client', 'adminPage', 'admin.HMTL'));
+	});
 	// Serve any static files
 	app.use(express.static(path.join(__dirname, 'client/public/build'))).use(cors());
 	app.use(express.static('client/public/build'));
-	app.use(express.static('client/public'));
 	app.use(express.static(path.join(__dirname, 'client/public')));
 
 	// Express serve up index.html file if it doesn't recognize route
 
 	app.get('*', (req, res) => {
+		console.log('***************');
 		res.sendFile(path.resolve('client', 'public', 'index.html'));
 	});
 }
