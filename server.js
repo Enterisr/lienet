@@ -156,11 +156,12 @@ app.post('/signIn', (req, res) => {
 if (process.env.NODE_ENV === 'production') {
 	app.get('/admin', utils.ensureToken, (req, res, next) => {
 		//todo:this.
-		app.use(express.static(path.join(__dirname, 'client/adminPage'))).use(cors());
-		app.use(express.static(path.join(__dirname, 'client/adminPage')));
-
-		app.use(express.static('client/adminPage'));
-		res.sendFile(path.resolve('client', 'adminPage', 'admin.html'));
+		// Serve any static files
+		app.use(express.static(path.join(__dirname, 'admin/public/build'))).use(cors());
+		app.use(express.static('admin/public/build'));
+		app.use(express.static(path.join(__dirname, 'admin/public')));
+		res.sendFile(path.resolve('admin', 'public', 'index.html'));
+		return;
 	});
 	// Serve any static files
 	app.use(express.static(path.join(__dirname, 'client/public/build'))).use(cors());
