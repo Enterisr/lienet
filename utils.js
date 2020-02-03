@@ -30,6 +30,18 @@ let utils = {
 		} else {
 			res.send(403).send('not authed!');
 		}
+	},
+	ValidateRegisterForm: function ValidateRegisterForm() {
+		//validate same results an in the client
+		statusMessage = '';
+		const regexMailTest = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+		const isNotReallyLong =
+			Object.values(formInput).findIndex((elm) => {
+				return elm.length > 100;
+			}) == -1;
+		const isEmailValid = regexMailTest.test(formInput.mail);
+		const isPasswordValid = IsStrongPassword(formInput.password) && formInput.password.length >= 8;
+		return isNotReallyLong && isEmailValid && isPasswordValid;
 	}
 };
 module.exports = utils;

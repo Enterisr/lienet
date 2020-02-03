@@ -2,38 +2,77 @@
   import Utils from "../Utils.js";
   export let isRegister;
   export let CloseModal;
-  $: formData = { mail: "", password: "" };
+  $: formInput = { mail: "", password: "" };
   $: serverResponse = "";
-
+  $: statusMessage = "";
   let isTriedToConnect = false;
   let originAddr = Utils.GetServerAdress();
 
+  function IsStrongPassword() {
+    let rulesCount = 0;
+    if (/[a-z]/.test(formInput.password)) {
+      rulesCount++;
+    }
+    if (/[A-Z]/.test(formInput.password)) {
+      rulesCount++;
+    }
+    if (/[0-9]/.test(formInput.password)) {
+      rulesCount++;
+    }
+    if (/[!@#$&*]/.test(formInput.password)) {
+      rulesCount++;
+    }
+    return rulesCount == 4;
+  }
+
+  function ValidateInput() {
+    statusMessage = "";
+    const regexMailTest = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    const isNotReallyLong =
+      Object.values(formInput).findIndex(elm => {
+        return elm.length > 100;
+      }) == -1;
+    const isEmailValid = regexMailTest.test(formInput.mail);
+    const isPasswordValid =
+      IsStrongPassword(formInput.password) && formInput.password.length >= 8;
+    if (isEmailValid && isPasswordValid && isNotReallyLong) {
+      return true;
+    } else {
+      if (!isEmailValid) {
+        statusMessage = "בטוח שזה המייל?*";
+      }
+      if (!isPasswordValid) {
+        statusMessage =
+          "*הססמה צריכה להכיל אות אנגלית קטנה, גדולה, מספר וסימן מיוחד";
+      }
+      if (!isNotReallyLong) {
+        statusMessage = "*אין לנו כל כך הרבה מקום בdb";
+      }
+      isTriedToConnect = true;
+    }
+  }
   async function SubmitForm(e) {
     e.preventDefault();
-    const request = isRegister ? "/Register" : "/SignIn";
-    let answer = await fetch(originAddr + request, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(formData)
-    });
-    if (!answer || answer.status == 500) {
-      errorMessage = answer;
-    } else {
-      let ansJsoned = await answer.json();
-      serverResponse = ansJsoned.isSinged ? true : false;
-      if (ansJsoned.isSinged) {
-        localStorage.setItem("auth", JSON.stringify(answer));
-        /*await fetch(originAddr + "/admin", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            authorization: ansJsoned.token
-          }
-        });*/
-        window.location.href = "/admin?authorization=" + ansJsoned.token;
+    if (!isRegister || ValidateInput()) {
+      //IF register, needs to validate that the input was ok
+      const request = isRegister ? "/Register" : "/SignIn";
+      let answer = await fetch(originAddr + request, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formInput)
+      });
+      if (!answer || answer.status == 500) {
+        errorMessage = answer;
+      } else {
+        let ansJsoned = await answer.json();
+        serverResponse = ansJsoned.isSinged ? true : false;
+        if (ansJsoned.isSinged) {
+          localStorage.setItem("auth", JSON.stringify(answer));
+          window.location.href = "/admin?authorization=" + ansJsoned.token;
+        }
       }
+      isTriedToConnect = true;
     }
-    isTriedToConnect = true;
   }
 </script>
 
@@ -79,20 +118,20 @@
 <form>
   {#if isRegister}
     <label>שם פרטי</label>
-    <input bind:value={formData.firstName} type="text" />
+    <input bind:value={formInput.firstName} type="text" />
     <label>שם משפחה</label>
-    <input bind:value={formData.lastName} type="text" />
+    <input bind:value={formInput.lastName} type="text" />
   {/if}
   <label>מייל</label>
-  <input bind:value={formData.mail} type="email" />
+  <input bind:value={formInput.mail} type="email" />
   <label>סיסמה</label>
-  <input bind:value={formData.password} type="password" />
+  <input bind:value={formInput.password} type="password" />
 
   <button on:click={SubmitForm}>{isRegister ? 'הרשמה' : 'התחברות'}</button>
   {#if isTriedToConnect}
     <div
       class={serverResponse ? 'serverResponse-div sucsess' : 'serverResponse-div fail'}>
-      {serverResponse ? 'התחברת בהצלחה' : 'מייל או ססמה לא נכונים'}
+      {statusMessage}
     </div>
   {/if}
   {#if !isRegister}
