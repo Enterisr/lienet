@@ -160,7 +160,7 @@ if (process.env.NODE_ENV === 'production') {
 		app.use(express.static(path.join(__dirname, 'admin/public/build'))).use(cors());
 		app.use(express.static('admin/public/build'));
 		app.use(express.static(path.join(__dirname, 'admin/public')));
-		res.sendFile(path.resolve('admin', 'public', 'index.html'));
+		res.redirect(path.resolve('admin', 'public', 'index.html'));
 		return;
 	});
 	// Serve any static files
