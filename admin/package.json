@@ -6,7 +6,6 @@
 		"dev": "rollup -c -w --port 7000",
 		"start": "sirv public --port 7000"
 	},
-
 	"devDependencies": {
 		"@rollup/plugin-commonjs": "^11.0.0",
 		"@rollup/plugin-node-resolve": "^7.0.0",
@@ -17,6 +16,9 @@
 		"svelte": "^3.0.0"
 	},
 	"dependencies": {
+		"medium-editor": "^5.23.3",
+		"medium-editor-colorpicker-buttons": "0.0.4",
+		"moment": "^2.24.0",
 		"sirv-cli": "^0.4.4"
 	}
 }

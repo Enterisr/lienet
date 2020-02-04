@@ -171,18 +171,30 @@ app.post('/signIn', (req, res) => {
 		res.status(500).send('the signIn failed :( maybe you should go cry in the corner, alone');
 	}
 });
-
-if (process.env.NODE_ENV === 'production') {
-	app.get('/admin', utils.ensureToken, (req, res, next) => {
-		app.use(express.static(path.join(__dirname, 'admin/public')));
-
-		res.sendFile(path.resolve('admin', 'public', 'index.html'));
+app.get('/adminDetails', utils.ensureToken, (req, res, next) => {
+	MongoClient.connect(dbUrl, (err, db) => {
+		if (err) console.log(err);
+		else {
+			let mail = utils.sanitize(req.mail);
+			db.db('lienet').collection('authors').findOne({ mail }, { projection: { password: 0 } }, (err, result) => {
+				if (err) throw err;
+				else {
+					db.close();
+					res.status(200).send(result);
+				}
+			});
+		}
 	});
+});
+app.get('/admin', utils.ensureToken, (req, res, next) => {
+	app.use(express.static(path.join(__dirname, 'admin/public')));
+	res.sendFile(path.resolve('admin', 'public', 'index.html'));
+});
 
-	app.get('/', (req, res) => {
-		res.sendFile(path.resolve('client', 'public', 'index.html'));
-	});
-	app.use('/admin', express.static(path.join(__dirname, 'admin/public')));
-	app.use(express.static(path.join(__dirname, 'client/public')));
-}
+app.get('/', (req, res) => {
+	res.sendFile(path.resolve('client', 'public', 'index.html'));
+});
+app.use('/admin', express.static(path.join(__dirname, 'admin/public')));
+app.use(express.static(path.join(__dirname, 'client/public')));
+
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));
