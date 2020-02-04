@@ -66,10 +66,8 @@
       } else {
         let ansJsoned = await answer.json();
         serverResponse = ansJsoned.isSinged ? true : false;
-        if (ansJsoned.isSinged) {
-          localStorage.setItem("auth", JSON.stringify(answer));
-          window.location.href = "/admin?authorization=" + ansJsoned.token;
-        }
+        console.log(ansJsoned);
+        window.location.replace("/admin");
       }
       isTriedToConnect = true;
     }

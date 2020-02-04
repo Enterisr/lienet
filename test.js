@@ -4,8 +4,7 @@ const dbUrl = 'mongodb://DrunkTolstoyAdMatay:I38MwVBQkb#l@ds233198.mlab.com:3319
 MongoClient.connect(dbUrl, (err, db) => {
 	if (err) console.log(err);
 	else {
-		const newValue = { $set: { author: 'רזי בר אשכנז - צמחוני' } };
-		db.db('lienet').collection('articles').updateMany({}, newValue, (err, result) => {
+		db.db('lienet').collection('authors').remove({}, (err, result) => {
 			if (err) throw err;
 			else {
 				db.close();

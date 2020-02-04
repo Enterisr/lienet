@@ -18,13 +18,18 @@ let utils = {
 		return arr[rnd];
 	},
 	ensureToken: function ensureToken(req, res, next) {
-		const bearerToken = req.query['authorization'];
-		if (typeof bearerToken !== 'undefined') {
-			jwt.verify(bearerToken, process.env.JWT_SECRET, (err, result) => {
-				if (err) {
+		const actualToken = req.cookies['token'];
+		if (typeof actualToken !== 'undefined') {
+			jwt.verify(actualToken, process.env.JWT_SECRET, (err, result) => {
+				if (err || !result) {
 					res.status(403).send('not authed!');
-				} else {
+				} else if (result && (!result.access || result.access == 'unauthenticated')) {
+					res.status(403).send('unauthenticated token');
+				} else if (result && result.access == 'authenticated') {
+					req.mail = result.mail;
 					next();
+				} else {
+					res.status(500).send('this is weird...');
 				}
 			});
 		} else {

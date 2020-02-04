@@ -2,7 +2,10 @@ const secret = require('dotenv').config();
 const express = require('express');
 const MongoClient = require('mongodb').MongoClient;
 const dbUrl = process.env.MONGOLAB_URI;
+
 const app = express();
+const adminRouter = express.Router();
+const clientRouter = express.Router();
 const port = process.env.PORT || 6969;
 const querystring = require('querystring');
 const cors = require('cors');
@@ -10,8 +13,11 @@ const path = require('path');
 const compression = require('compression');
 const bcrypt = require('bcrypt');
 const utils = require('./utils');
+const moment = require('moment');
+const cookieParser = require('cookie-parser');
 var jwt = require('jsonwebtoken');
 
+app.use(cookieParser());
 const saltRounds = 10;
 
 app.use(compression());
@@ -136,9 +142,22 @@ app.post('/signIn', (req, res) => {
 					} else {
 						bcrypt.compare(enteredPassword, userFromDb.password, function(err, HashCompareRes) {
 							if (HashCompareRes) {
-								jwt.sign({ mail }, process.env.JWT_SECRET, { expiresIn: 60 * 60 }, (err, token) => {
-									res.send({ isSinged: true, token });
-								});
+								jwt.sign(
+									{ mail, access: 'authenticated' },
+									process.env.JWT_SECRET,
+									{ expiresIn: '2 hours' },
+									(err, token) => {
+										let now = new Date();
+										var expDate = now.setHours(now.getHours() + 2);
+										res.cookie('token', token, {
+											sameSite: true,
+											maxAge: expDate,
+											httpOnly: true,
+											secure: process.env.NODE_ENV == 'production'
+										});
+										res.send({ isSinged: true, token });
+									}
+								);
 							} else {
 								res.send({ isSinged: false, token: null });
 							}
@@ -155,25 +174,15 @@ app.post('/signIn', (req, res) => {
 
 if (process.env.NODE_ENV === 'production') {
 	app.get('/admin', utils.ensureToken, (req, res, next) => {
-		//todo:this.
-		// Serve any static files
-		app.use(express.static(path.join(__dirname, 'admin/public/build'))).use(cors());
-		app.use(express.static('admin/public/build'));
 		app.use(express.static(path.join(__dirname, 'admin/public')));
-		res.redirect(path.resolve('admin', 'public', 'index.html'));
-		return;
+
+		res.sendFile(path.resolve('admin', 'public', 'index.html'));
 	});
-	// Serve any static files
-	app.use(express.static(path.join(__dirname, 'client/public/build'))).use(cors());
-	app.use(express.static('client/public/build'));
-	app.use(express.static(path.join(__dirname, 'client/public')));
 
-	// Express serve up index.html file if it doesn't recognize route
-
-	app.get('*', (req, res) => {
-		console.log('***************');
+	app.get('/', (req, res) => {
 		res.sendFile(path.resolve('client', 'public', 'index.html'));
 	});
+	app.use('/admin', express.static(path.join(__dirname, 'admin/public')));
+	app.use(express.static(path.join(__dirname, 'client/public')));
 }
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));
-//TODO: change this to prod mode..
