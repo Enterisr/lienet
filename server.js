@@ -194,7 +194,7 @@ app.get('/admin', utils.ensureToken, (req, res, next) => {
 app.get('/', (req, res) => {
 	res.sendFile(path.resolve('client', 'public', 'index.html'));
 });
-app.use('/admin', express.static(path.join(__dirname, 'admin/public')));
+app.use('/admin', express.static(path.join(__dirname, 'admin/public'))).cors();
 app.use(express.static(path.join(__dirname, 'client/public')));
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));
