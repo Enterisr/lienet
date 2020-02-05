@@ -187,7 +187,7 @@ app.get('/adminDetails', utils.ensureToken, (req, res, next) => {
 	});
 });
 app.get('/admin', utils.ensureToken, (req, res, next) => {
-	app.use(express.static(path.join(__dirname, 'admin/public')));
+	app.use(express.static(path.join(__dirname, 'admin/public'))).cors();
 	res.sendFile(path.resolve('admin', 'public', 'index.html'));
 });
 
