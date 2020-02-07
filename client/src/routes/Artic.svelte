@@ -292,6 +292,7 @@
     }
     .newCommentDiv {
       padding: 1vh;
+        width: 100%;
     }
   }
   @media screen and (max-height: 600px) {
