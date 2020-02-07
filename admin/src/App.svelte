@@ -120,6 +120,11 @@
     .titles-div {
       width: 100%;
     }
+      .editor{
+        padding: 1vh;
+        margin: 1vh;
+        width: 90%;  
+      }
   }
 </style>
 

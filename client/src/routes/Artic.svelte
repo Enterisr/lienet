@@ -100,20 +100,21 @@
     padding: 2em;
     text-align: right;
     margin: auto;
-    transition: ease .4s all;
+    transition: ease 0.4s all;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
   }
   .article-body:hover {
-        box-shadow: 0 -6px 47px -34px #1da1f2, 0 6px 47px -34px #f44336;
+    box-shadow: 0 -6px 47px -34px #1da1f2, 0 6px 47px -34px #f44336;
   }
-  
+
   @media screen and (max-width: 700px) {
     .article-body {
-      min-width: 100%;
+      width: 95%;
       overflow: auto;
-      max-height: 70vh;
       margin: 0;
-      padding: 0;
+      padding: 1vh;
+      box-shadow: none;
+      margin: auto;
     }
     .title-div {
       font-size: 1.2em;
@@ -217,7 +218,7 @@
     display: inline-block;
   }
   .socialBar-div {
- position: fixed;
+    position: fixed;
     top: calc(75vh - 4em);
     left: 0;
     display: flex;
@@ -260,6 +261,7 @@
       scroll-behavior: smooth;
       overflow-y: none;
     }
+
     .socialBar-div {
       bottom: 0;
       width: 100vw;
@@ -292,13 +294,10 @@
     }
     .newCommentDiv {
       padding: 1vh;
-        width: 100%;
+      width: 90%;
     }
   }
   @media screen and (max-height: 600px) {
-    main {
-      max-height: 70vh;
-    }
   }
   @keyframes lds-ripple {
     0% {
@@ -338,7 +337,9 @@
   {:then article}
     <div class="start-section">
       <time>{moment(article.time).format('DD/MM/YYYY [בשעה] HH:MM')}</time>
-      <div class="author-p">{article.author.firstName+" "+article.author.lastName}</div>
+      <div class="author-p">
+        {article.author.firstName + ' ' + article.author.lastName}
+      </div>
     </div>
 
     <article>

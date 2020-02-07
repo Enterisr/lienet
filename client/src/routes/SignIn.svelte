@@ -62,11 +62,11 @@
         body: JSON.stringify(formInput)
       });
       if (!answer || answer.status == 500) {
-        errorMessage = answer;
+        statusMessage = answer;
       } else {
         let ansJsoned = await answer.json();
-        serverResponse = ansJsoned.isSinged ? true : false;
-        console.log(ansJsoned);
+        statusMessage = ansJsoned.message;
+        if(ansJsoned.status== "success")
         window.location.replace("/admin");
       }
       isTriedToConnect = true;
@@ -102,8 +102,12 @@
     background: rgb(98, 226, 98);
   }
   .fail {
-    background: red;
+      background: red;
     color: white;
+    width: calc(100% - 2em);
+    margin: auto;
+    border-radius: 5px;
+    margin-top: 1em;
   }
 </style>
 

@@ -121,11 +121,21 @@ app.post('/Register', (req, res) => {
 			MongoClient.connect(dbUrl, (err, db) => {
 				if (err) throw err;
 				else {
-					db.db('lienet').collection('authors').insertOne({ ...author, password: hash }, (err, result) => {
+					db.db('lienet').collection('authors').findOne({mail:author.mail}, (err, matchedUser) => {
 						if (err) throw err;
-						else {
+						else if(matchedUser!==null){
 							db.close();
-							res.send(true);
+							res.send({status:'failed',message:'mail already registered'});
+						}
+						else {
+							db.db('lienet').collection('authors').insertOne({ ...author, password: hash }, (err, result) => {
+								if (err) throw err;
+								else {
+									db.close();
+									res.send({status:'success',message:'success'});
+
+								}
+							});
 						}
 					});
 				}
@@ -133,7 +143,7 @@ app.post('/Register', (req, res) => {
 		});
 	} catch (err) {
 		console.error(err);
-		res.status(500).send('the registretion failed :( maybe you should go cry in the corner, alone');
+		res.status(500).send({status:'failed',error:"server error :( try again later, maybe we'll fix it. maybe not"});
 	}
 });
 app.post('/signIn', (req, res) => {
