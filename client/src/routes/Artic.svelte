@@ -97,11 +97,16 @@
   }
   .article-body {
     background: white;
-    padding: 1em;
-    text-align: center;
+    padding: 2em;
+    text-align: right;
     margin: auto;
+    transition: ease .4s all;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
   }
+  .article-body:hover {
+        box-shadow: 0 -6px 47px -34px #1da1f2, 0 6px 47px -34px #f44336;
+  }
+  
   @media screen and (max-width: 700px) {
     .article-body {
       min-width: 100%;
@@ -159,7 +164,7 @@
   .newCommentDiv {
     display: flex;
     flex-direction: column;
-    width: 60%;
+    width: 30%;
     justify-content: space-evenly;
     padding: 1em;
     margin: 1em auto;
@@ -212,15 +217,14 @@
     display: inline-block;
   }
   .socialBar-div {
-    position: fixed;
-    top: 75vh;
+ position: fixed;
+    top: calc(75vh - 4em);
     left: 0;
     display: flex;
     flex-direction: row;
-    margin: 2vw;
+    margin: 1em;
     flex-direction: column;
     transition: all ease 0.4s;
-
     border-radius: 30px;
     background: #f7f7f7;
     box-shadow: 0px 0px 0px 2px #c9ebff;
@@ -333,7 +337,7 @@
   {:then article}
     <div class="start-section">
       <time>{moment(article.time).format('DD/MM/YYYY [בשעה] HH:MM')}</time>
-      <div class="author-p">{article.author}</div>
+      <div class="author-p">{article.author.firstName+" "+article.author.lastName}</div>
     </div>
 
     <article>

@@ -1,6 +1,8 @@
 const secret = require('dotenv').config();
 const express = require('express');
 const MongoClient = require('mongodb').MongoClient;
+const ObjectID = require('mongodb').ObjectID;
+
 const dbUrl = process.env.MONGOLAB_URI;
 
 const app = express();
@@ -29,10 +31,18 @@ app.get('/article', (req, res) => {
 		if (!isNaN(req.query.num)) {
 			const dbo = db.db('lienet');
 			let requestedArticle = parseInt(req.query.num);
-			dbo.collection('articles').findOne({ id: requestedArticle }, (err, resule) => {
+			dbo.collection('articles').findOne({ id: requestedArticle }, (err, articleObj) => {
 				if (err) throw err;
-				if (resule) {
-					res.send(resule);
+				if (articleObj) {
+					//saves in the articles colletion only the mail of the author,this is the identifier per author. 
+					dbo.collection('authors').findOne({ mail: articleObj.author },(err,author)=>{
+						if(err) throw err;
+						else{
+							res.send({...articleObj,author});	
+							db.close();
+
+						}
+					})
 				} else {
 					res.send({ id: '-1', text: '404' });
 				}
@@ -40,7 +50,6 @@ app.get('/article', (req, res) => {
 		} else {
 			res.send(new Error('500'));
 		}
-		db.close();
 	});
 });
 app.get('/titles', (req, res) => {
@@ -51,7 +60,7 @@ app.get('/titles', (req, res) => {
 				.db('lienet')
 				.collection('articles')
 				.find({}, { projection: { title: 1, id: 1 } })
-				.sort({ _id: -1 })
+				.sort({ id: -1 })
 				.toArray((err, result) => {
 					if (result) res.send(result);
 					else {
@@ -186,10 +195,28 @@ app.get('/adminDetails', utils.ensureToken, (req, res, next) => {
 		}
 	});
 });
+app.post('/postArticle', utils.ensureToken, (req, res, next) => {
+	MongoClient.connect(dbUrl, (err, db) => {
+		if (err) console.log(err);
+		else {
+			let article = utils.sanitize(req.body);
+			db.db('lienet').collection('articles').find().sort({id:-1}).limit(1).toArray((err, articleWithMaxId) => {
+			
+					const newId = articleWithMaxId[0].id+1;
+					db.db('lienet').collection('articles').insertOne( {id:newId,...article} , (err, result) => {
+						if (err) throw err;
+						else {
+							db.close();
+							res.status(200).send(result);
+						}
+					});
+			
+			});
+		
+		}
+	});
+});
 app.get('/admin', utils.ensureToken, (req, res, next) => {
-	app.use("/admin",express.static(path.join(__dirname, 'client/public')));
-app.use("/admin",express.static(path.join(__dirname, 'client/public/build')));
-
 	res.sendFile(path.resolve('admin', 'public', 'index.html'));
 });
 

@@ -6,7 +6,7 @@
   import MediumEditorColorPickerButtons from "medium-editor-colorpicker-buttons";
   let editor;
   $: isGotAnswer = false;
-  $: date = moment();
+  let articleScheme = {title:'',date: moment(),subTitle:'',text:''}
   // Add it to the Statamic object.
   onMount(async () => {
     user = await getAuthorDetials();
@@ -40,14 +40,26 @@
       method: "GET",
       headers: { "Content-Type": "application/json" }
     }).then(res => {
+      
       return res.json();
+    }).then(aut=>{
+      articleScheme.author = aut;
+      return aut;
     });
   }
   function SubmitArticle() {
-    //TODO:this, and some
+  articleScheme.text = editor.getContent();
+   fetch("/postArticle", {
+      method: "POST",
+      headers:
+       { "Content-Type": "application/json" },
+           body: JSON.stringify(articleScheme)
+    }).then(res => {
+      return res.json();
+    });
   }
   setInterval(() => {
-    date = date.add("1", "second");
+    articleScheme.date = articleScheme.date.add("1", "second");
   }, 1000);
 </script>
 
@@ -84,7 +96,7 @@
   .titles-div {
     display: flex;
     flex-direction: column;
-    width: 40%;
+    width: 27em;
     justify-content: center;
     text-align: center;
     margin: 1em auto;
@@ -122,17 +134,17 @@
     </p>
   {/if}
   <div class="titles-div">
-    <input placeholder="כותרת" />
-    <textarea placeholder="כותרת משנה" />
+    <input bind:value={articleScheme.title} placeholder="כותרת" />
+    <textarea bind:value={articleScheme.subTitle} placeholder="כותרת משנה" />
   </div>
 
   <p class="date-p">
 
-    <date>{date.format('DD/MM/YYYY')}</date>
-    <date>{date.format('HH:mm:ss')}</date>
+    <date>{articleScheme.date.format('DD/MM/YYYY')}</date>
+    <date>{articleScheme.date.format('HH:mm:ss')}</date>
 
   </p>
-  <div bind:this={editor} class="editor">הכתבה המדהימה שלי</div>
+  <div bind:this={editor}  class="editor">הכתבה המדהימה שלי</div>
   <button on:click={SubmitArticle}>הגש כתבה!</button>
 
 </main>

@@ -4,7 +4,7 @@ const dbUrl = 'mongodb://DrunkTolstoyAdMatay:I38MwVBQkb#l@ds233198.mlab.com:3319
 MongoClient.connect(dbUrl, (err, db) => {
 	if (err) console.log(err);
 	else {
-		db.db('lienet').collection('authors').remove({}, (err, result) => {
+		db.db('lienet').collection('articles').updateMany({},{$set:{author:'drunktolstoy@gmail.com'}}, (err, result) => {
 			if (err) throw err;
 			else {
 				db.close();

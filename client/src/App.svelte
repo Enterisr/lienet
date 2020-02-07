@@ -98,7 +98,7 @@
     background: white;
     border: solid black 3px;
     border-radius: 30px;
-    width: 40%;
+    width: 400px;
     margin: auto;
     top: 40%;
     position: relative;
