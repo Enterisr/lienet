@@ -34,15 +34,14 @@ app.get('/article', (req, res) => {
 			dbo.collection('articles').findOne({ id: requestedArticle }, (err, articleObj) => {
 				if (err) throw err;
 				if (articleObj) {
-					//saves in the articles colletion only the mail of the author,this is the identifier per author. 
-					dbo.collection('authors').findOne({ mail: articleObj.author },(err,author)=>{
-						if(err) throw err;
-						else{
-							res.send({...articleObj,author});	
+					//saves in the articles colletion only the mail of the author,this is the identifier per author.
+					dbo.collection('authors').findOne({ mail: articleObj.author }, (err, author) => {
+						if (err) throw err;
+						else {
+							res.send({ ...articleObj, author });
 							db.close();
-
 						}
-					})
+					});
 				} else {
 					res.send({ id: '-1', text: '404' });
 				}
@@ -121,21 +120,22 @@ app.post('/Register', (req, res) => {
 			MongoClient.connect(dbUrl, (err, db) => {
 				if (err) throw err;
 				else {
-					db.db('lienet').collection('authors').findOne({mail:author.mail}, (err, matchedUser) => {
+					db.db('lienet').collection('authors').findOne({ mail: author.mail }, (err, matchedUser) => {
 						if (err) throw err;
-						else if(matchedUser!==null){
+						else if (matchedUser !== null) {
 							db.close();
-							res.send({status:'failed',message:'mail already registered'});
-						}
-						else {
-							db.db('lienet').collection('authors').insertOne({ ...author, password: hash }, (err, result) => {
-								if (err) throw err;
-								else {
-									db.close();
-									res.send({status:'success',message:'success'});
-
-								}
-							});
+							res.send({ status: 'failed', message: 'mail already registered' });
+						} else {
+							db
+								.db('lienet')
+								.collection('authors')
+								.insertOne({ ...author, password: hash }, (err, result) => {
+									if (err) throw err;
+									else {
+										db.close();
+										res.send({ status: 'success', message: 'success' });
+									}
+								});
 						}
 					});
 				}
@@ -143,7 +143,9 @@ app.post('/Register', (req, res) => {
 		});
 	} catch (err) {
 		console.error(err);
-		res.status(500).send({status:'failed',error:"server error :( try again later, maybe we'll fix it. maybe not"});
+		res
+			.status(500)
+			.send({ status: 'failed', error: "server error :( try again later, maybe we'll fix it. maybe not" });
 	}
 });
 app.post('/signIn', (req, res) => {
@@ -174,11 +176,11 @@ app.post('/signIn', (req, res) => {
 											httpOnly: true,
 											secure: process.env.NODE_ENV == 'production'
 										});
-										res.send({ isSinged: true, token });
+										res.send({ status: 'success', message: 'success' });
 									}
 								);
 							} else {
-								res.send({ isSinged: false, token: null });
+								res.send({ isSinged: 'failed', message: 'wrong password' });
 							}
 						});
 					}
@@ -187,7 +189,9 @@ app.post('/signIn', (req, res) => {
 		});
 	} catch (err) {
 		console.error(err);
-		res.status(500).send('the signIn failed :( maybe you should go cry in the corner, alone');
+		res
+			.status(500)
+			.send({ status: 'failed', message: 'the signIn failed :( maybe you should go cry in the corner, alone' });
 	}
 });
 app.get('/adminDetails', utils.ensureToken, (req, res, next) => {
@@ -210,19 +214,16 @@ app.post('/postArticle', utils.ensureToken, (req, res, next) => {
 		if (err) console.log(err);
 		else {
 			let article = utils.sanitize(req.body);
-			db.db('lienet').collection('articles').find().sort({id:-1}).limit(1).toArray((err, articleWithMaxId) => {
-			
-					const newId = articleWithMaxId[0].id+1;
-					db.db('lienet').collection('articles').insertOne( {id:newId,...article} , (err, result) => {
-						if (err) throw err;
-						else {
-							db.close();
-							res.status(200).send(result);
-						}
-					});
-			
+			db.db('lienet').collection('articles').find().sort({ id: -1 }).limit(1).toArray((err, articleWithMaxId) => {
+				const newId = articleWithMaxId[0].id + 1;
+				db.db('lienet').collection('articles').insertOne({ id: newId, ...article }, (err, result) => {
+					if (err) throw err;
+					else {
+						db.close();
+						res.status(200).send(result);
+					}
+				});
 			});
-		
 		}
 	});
 });
@@ -233,8 +234,8 @@ app.get('/admin', utils.ensureToken, (req, res, next) => {
 app.get('/', (req, res) => {
 	res.sendFile(path.resolve('client', 'public', 'index.html'));
 });
-app.use("/admin",express.static(path.join(__dirname, 'admin/public')));
-app.use("/admin",express.static(path.join(__dirname, 'admin/public/build')));
+app.use('/admin', express.static(path.join(__dirname, 'admin/public')));
+app.use('/admin', express.static(path.join(__dirname, 'admin/public/build')));
 
 app.use(express.static(path.join(__dirname, 'client/public')));
 app.use(express.static(path.join(__dirname, 'client/public/build')));

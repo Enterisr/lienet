@@ -65,9 +65,8 @@
         statusMessage = answer;
       } else {
         let ansJsoned = await answer.json();
-        statusMessage = ansJsoned.message;
-        if(ansJsoned.status== "success")
-        window.location.replace("/admin");
+        if (ansJsoned.status == "failed") statusMessage = ansJsoned.message;
+        if (ansJsoned.status == "success") window.location.replace("/admin");
       }
       isTriedToConnect = true;
     }
@@ -102,7 +101,7 @@
     background: rgb(98, 226, 98);
   }
   .fail {
-      background: red;
+    background: red;
     color: white;
     width: calc(100% - 2em);
     margin: auto;

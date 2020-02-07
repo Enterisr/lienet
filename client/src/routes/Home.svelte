@@ -34,7 +34,7 @@
     }
   }
   function GenerateRandomNumber() {
-    //let the api think this is not scraping.. 
+    //let the api think this is not scraping..
     return Math.floor(Math.random() * 300 + 100);
   }
 </script>
@@ -45,7 +45,7 @@
     text-align: center;
     padding: 0;
     margin: 0 auto;
-    max-width: 50vw;
+    max-width: 45vw;
     overflow: auto;
 
     border-radius: 0px 1em 1em 0em;
@@ -64,47 +64,47 @@
     box-sizing: border-box;
   }
   li:first-child {
-     font-size: 1.5em;
+    font-size: 1.5em;
     width: 75%;
     margin-bottom: 1em;
     background: inherit;
     margin: 1em auto;
-    padding-left:0; 
+    padding-left: 0;
     height: 25vh;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
     border: solid 3px #b1b1b1;
     border-radius: 10px;
   }
-  li:first-child .img-div{
-max-width: none;
-left:0;
+  li:first-child .img-div {
+    max-width: none;
+    left: 0;
   }
 
-  li:first-child span{
-    color:rgb(44, 44, 44);
+  li:first-child span {
+    color: rgb(44, 44, 44);
   }
-    li:first-child span:hover{
-    color:rgb(0, 0, 0);
+  li:first-child span:hover {
+    color: rgb(0, 0, 0);
   }
   li:first-child img {
     border-radius: 0;
-        border-radius: 0;
+    border-radius: 0;
     height: 10em;
     width: 10em;
     left: 0;
   }
 
   li:nth-child(even) {
-    background: rgb(85, 85, 255);
+    background: rgb(43, 43, 243);
   }
-    li:nth-child(even):hover {
-        box-shadow: 0px 0px 10px 3px rgba(165, 126, 255, 0.479)
+  li:nth-child(even):hover {
+    box-shadow: 0px 0px 10px 3px rgb(126, 156, 255);
   }
-  li:nth-child(2n+3) {
+  li:nth-child(2n + 3) {
     background: rgb(255, 0, 0);
   }
-    li:nth-child(2n+3):hover {
-        box-shadow: 0px 0px 10px 3px rgb(255, 126, 126)
+  li:nth-child(2n + 3):hover {
+    box-shadow: 0px 0px 10px 3px rgb(255, 126, 126);
   }
   li > .img-div > img {
     border-radius: 30px;
@@ -142,7 +142,7 @@ left:0;
     position: relative;
     display: block;
   }
- 
+
   @media screen and (max-width: 600px) {
     ul {
       max-height: 80vh;
@@ -151,53 +151,51 @@ left:0;
       max-width: none;
       border-radius: 0;
     }
-     li:first-child {
-     font-size: 1.5em;
-    width:100%;
-    margin:0;
-    box-shadow: none;
-    padding:0;
-    border: none;
-    border-radius: 10px;
-  }
-     li:first-child .title-div{
-         width: 100%;
-        text-align: unset;
-        margin: 0;
-        position: relative;
-        top: 0;
-        height: 50%;
-            display: inline-block;
-  }
-       li:first-child .img-div{
-           height: calc(100% - 2em);
-  }
-  
-  li:first-child span{
-    width: 100%;
-    top: 50%;
-  }
-  li:first-child img{
-    border-radius: 0;
-    position: relative;
-    width: 100%;
-    height: 100%;
-    left: 0;
+    li:first-child {
+      font-size: 1.5em;
+      width: 100%;
+      margin: 0;
+      box-shadow: none;
+      padding: 0;
+      border: none;
+      border-radius: 10px;
+    }
+    li:first-child .title-div {
+      width: 100%;
+      text-align: unset;
+      margin: 0;
+      position: relative;
+      top: 0;
+      height: 50%;
+      display: inline-block;
+    }
+    li:first-child .img-div {
+      height: calc(100% - 2em);
+    }
 
+    li:first-child span {
+      width: 100%;
+      top: 50%;
+    }
+    li:first-child img {
+      border-radius: 0;
+      position: relative;
+      width: 100%;
+      height: 100%;
+      left: 0;
+    }
   }
-  }
- 
 </style>
 
 <ul>
 
-  {#each artics as artic,i}
+  {#each artics as artic, i}
     <li>
 
       <div class="img-div">
 
         <img
-          src={i==0?"https://source.unsplash.com/900x900/?sport,politics,fashion,israel,holystate,netanyahu,usa,street,trump":`https://source.unsplash.com/${GenerateRandomNumber()}`+`x`+`${GenerateRandomNumber()}/?politics,israel,holystate,netanyahu,usa,street,trump`}
+          src={i == 0 ? 'https://source.unsplash.com/900x900/?sport,politics,fashion,israel,holystate,netanyahu,usa,street,trump' : `https://source.unsplash.com/${GenerateRandomNumber()}` + `x` + `${GenerateRandomNumber()}/?politics,israel,holystate,netanyahu,usa,street,trump`}
           alt="איש סגול רע" />
       </div>
       <div class="title-div">
