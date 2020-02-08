@@ -1,27 +1,26 @@
-const secret = require('dotenv').config();
+/**************node modules************************/
 const express = require('express');
 const MongoClient = require('mongodb').MongoClient;
-const ObjectID = require('mongodb').ObjectID;
-
 const dbUrl = process.env.MONGOLAB_URI;
-
 const app = express();
-const adminRouter = express.Router();
-const clientRouter = express.Router();
 const port = process.env.PORT || 6969;
-const querystring = require('querystring');
 const cors = require('cors');
 const path = require('path');
 const compression = require('compression');
 const bcrypt = require('bcrypt');
-const utils = require('./utils');
-const moment = require('moment');
 const cookieParser = require('cookie-parser');
-var jwt = require('jsonwebtoken');
+const jwt = require('jsonwebtoken');
 
-app.use(cookieParser());
+/**************app modules************************/
+const utils = require('./utils');
+const Mailer = require('./mailer');
+
+require('dotenv').config();
 const saltRounds = 10;
 
+mailer = new Mailer('lienetmail@gmail.com');
+
+app.use(cookieParser());
 app.use(compression());
 app.use(cors());
 app.use(express.json());
@@ -134,6 +133,12 @@ app.post('/Register', (req, res) => {
 									else {
 										db.close();
 										res.send({ status: 'success', message: 'success' });
+										mailer.SendMail({
+											to: author.mail,
+											subject: 'תודה שנרשמת לlienet',
+											content:
+												'הרובוטים שלנו סורקים ברגעים אלו את חשבון הפייסבוק, הטוויטר והמייל שלך! במידה ולא נמצא שום דבר קוהרנטי, אתה בפנים!'
+										});
 									}
 								});
 						}

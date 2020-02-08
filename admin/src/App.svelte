@@ -6,7 +6,7 @@
   import MediumEditorColorPickerButtons from "medium-editor-colorpicker-buttons";
   let editor;
   $: isGotAnswer = false;
-  let articleScheme = {title:'',date: moment(),subTitle:'',text:''}
+  let articleScheme = { title: "", date: moment(), subTitle: "", text: "" };
   // Add it to the Statamic object.
   onMount(async () => {
     user = await getAuthorDetials();
@@ -39,21 +39,22 @@
     return fetch("/adminDetails", {
       method: "GET",
       headers: { "Content-Type": "application/json" }
-    }).then(res => {
-      
-      return res.json();
-    }).then(aut=>{
-      articleScheme.author = aut;
-      return aut;
-    });
+    })
+      .then(res => {
+        return res.json();
+      })
+      .then(aut => {
+        articleScheme.author = aut;
+        return aut;
+      });
   }
   function SubmitArticle() {
-  articleScheme.text = editor.getContent();
-   fetch("/postArticle", {
+    articleScheme.text = editor.getContent();
+    articleScheme.author = articleScheme.author.mail;
+    fetch("/postArticle", {
       method: "POST",
-      headers:
-       { "Content-Type": "application/json" },
-           body: JSON.stringify(articleScheme)
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(articleScheme)
     }).then(res => {
       return res.json();
     });
@@ -120,11 +121,11 @@
     .titles-div {
       width: 100%;
     }
-      .editor{
-        padding: 1vh;
-        margin: 1vh;
-        width: 90%;  
-      }
+    .editor {
+      padding: 1vh;
+      margin: 1vh;
+      width: 90%;
+    }
   }
 </style>
 
@@ -149,7 +150,7 @@
     <date>{articleScheme.date.format('HH:mm:ss')}</date>
 
   </p>
-  <div bind:this={editor}  class="editor">הכתבה המדהימה שלי</div>
+  <div bind:this={editor} class="editor">הכתבה המדהימה שלי</div>
   <button on:click={SubmitArticle}>הגש כתבה!</button>
 
 </main>
