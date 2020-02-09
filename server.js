@@ -145,6 +145,7 @@ app.post('/Register', (req, res) => {
 														content
 													});
 													res.clearCookie('token');
+													utils.generateTokenCookie(mail, res);
 													res.send({ status: 'success', message: 'success' });
 												}
 											}
@@ -189,22 +190,8 @@ app.post('/signIn', (req, res) => {
 					} else {
 						bcrypt.compare(enteredPassword, userFromDb.password, function(err, HashCompareRes) {
 							if (HashCompareRes) {
-								jwt.sign(
-									{ mail, access: 'authenticated' },
-									process.env.JWT_SECRET,
-									{ expiresIn: '2 hours' },
-									(err, token) => {
-										let now = new Date();
-										var expDate = now.setHours(now.getHours() + 2);
-										res.cookie('token', token, {
-											sameSite: true,
-											maxAge: expDate,
-											httpOnly: true,
-											secure: process.env.NODE_ENV == 'production'
-										});
-										res.send({ status: 'success', message: 'success' });
-									}
-								);
+								utils.generateTokenCookie(mail, res);
+								res.send({ status: 'success', message: 'success' });
 							} else {
 								res.send({ isSinged: 'failed', message: 'wrong password' });
 							}

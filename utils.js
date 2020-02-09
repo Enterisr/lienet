@@ -36,6 +36,18 @@ let utils = {
 			res.send(403).send('not authed!');
 		}
 	},
+	generateTokenCookie: function generateToken(mail, res) {
+		jwt.sign({ mail, access: 'authenticated' }, process.env.JWT_SECRET, { expiresIn: '2 hours' }, (err, token) => {
+			let now = new Date();
+			var expDate = now.setHours(now.getHours() + 2);
+			res.cookie('token', token, {
+				sameSite: true,
+				maxAge: expDate,
+				httpOnly: true,
+				secure: process.env.NODE_ENV == 'production'
+			});
+		});
+	},
 	ValidateRegisterForm: function ValidateRegisterForm() {
 		//validate same results an in the client
 		statusMessage = '';
