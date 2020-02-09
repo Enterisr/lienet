@@ -163,7 +163,7 @@ app.post('/Register', (req, res) => {
 			.send({ status: 'failed', error: "server error :( try again later, maybe we'll fix it. maybe not" });
 	}
 });
-app.get('verifyMail', utils.ensureToken, (req, res) => {
+app.get('/verifyMail', utils.ensureToken, (req, res) => {
 	let mail = utile.sanitize(req.mail);
 	var setParams = { $set: { isVerifiedMail: true } };
 	db.db('lienet').collection('authors').UpdateOne({ mail }, setParams, (err, result) => {
