@@ -18,7 +18,7 @@ let utils = {
 		return arr[rnd];
 	},
 	ensureToken: function ensureToken(req, res, next) {
-		const actualToken = req.cookies['token'];
+		const actualToken = req.cookies['token'] || req.query.token; //gets in query in email verification
 		if (typeof actualToken !== 'undefined') {
 			jwt.verify(actualToken, process.env.JWT_SECRET, (err, result) => {
 				if (err || !result) {
@@ -36,7 +36,7 @@ let utils = {
 			res.send(403).send('not authed!');
 		}
 	},
-	generateTokenCookie: function generateToken(mail, res) {
+	generateTokenCookie: function generateToken(mail, res, callback) {
 		jwt.sign({ mail, access: 'authenticated' }, process.env.JWT_SECRET, { expiresIn: '2 hours' }, (err, token) => {
 			let now = new Date();
 			var expDate = now.setHours(now.getHours() + 2);
@@ -46,6 +46,7 @@ let utils = {
 				httpOnly: true,
 				secure: process.env.NODE_ENV == 'production'
 			});
+			if (callback) callback(token);
 		});
 	},
 	ValidateRegisterForm: function ValidateRegisterForm() {

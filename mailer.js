@@ -1,5 +1,6 @@
 const nodemailer = require('nodemailer');
 const { google } = require('googleapis');
+const bcrypt = require('bcrypt');
 const OAuth2 = google.auth.OAuth2;
 const secret = require('dotenv').config();
 
@@ -35,14 +36,32 @@ class Mailer {
 		});
 		return await oauth2Client.getAccessToken();
 	}
-	SendMail({ to, subject, isHTML, content }) {
-		this.transporter.sendMail({
-			from: this.appAddress,
-			to,
-			subject,
-			generateTextFromHTML: isHTML,
-			html: content
-		});
+	SendMail({ to, subject, isHTML, content, params }) {
+		console.log('---------------send mail');
+		try {
+			if (params) {
+				content = this.EmbedMailParams(params, content);
+			}
+			this.transporter.sendMail({
+				from: this.appAddress,
+				to,
+				subject,
+				generateTextFromHTML: isHTML,
+				html: content
+			});
+		} catch (ex) {
+			throw ex;
+		}
+	}
+	EmbedMailParams(params, content) {
+		//enumrating the html, if catches {~someproperty~} then replaces with value!
+		for (let prop in params) {
+			if (params.hasOwnProperty(prop)) {
+				//TODO: find out why string literal fucks it up..
+				content = content.replace('{' + prop + '}', params[prop]);
+			}
+		}
+		return content;
 	}
 }
 module.exports = Mailer;

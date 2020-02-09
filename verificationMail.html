@@ -1,5 +1,17 @@
 <head>
 <meta charset="UTF-8">
+<script>
+       function GetServerAdress() {
+		if (window.location.href.includes('localhost')) {
+			const uri = new URL(window.location.href);
+			uri.port = '6969';
+			return uri.origin;
+		} else {
+			return document.location.origin;
+		}
+	
+    }
+</script>
 <style>
     p{
         background-color:antiquewhite;
@@ -14,15 +26,20 @@
     }
 </style>
 </head>
-<body>
+<body style="direction: rtl; text-align: center; background: white;">
     <div>
-        <h1>ברוך הבא לlienet!</h1>
-        <p>
+        <h1>lienet אימות</h1>
+        <p style="background-color:whitesmoke;
+        border-radius: 20px;">
             על מנת לאמת שזהו המייל שלך יש ללחוץ על הכפתור הירוק
-        </p>
-        <button>
-            <a href="https://lieneteu.herokuapp.com/verifyMail">
+      
+        <button style="background: rgb(99, 252, 99);
+        color:green;
+        padding: 10px;">
+            <a href="{origin}/verifyMail?verification_id={verification_id}&token={token}">
                אמת!
         </a></button>
+    </p>
+
     </div>
 </body>

@@ -126,32 +126,47 @@ app.post('/Register', (req, res) => {
 							db.close();
 							res.send({ status: 'failed', message: 'mail already registered' });
 						} else {
-							db
-								.db('lienet')
-								.collection('authors')
-								.insertOne({ ...author, password: hash, isVerifiedMail: false }, (err, result) => {
-									if (err) throw err;
-									else {
-										db.close();
-										fs.readFile(
-											path.join(__dirname, 'verificationMail.html'),
-											'utf8',
-											(err, content) => {
-												if (err) throw err;
-												else {
+							let verification_id = Math.floor(Math.random() * 1000000) + 1; //when the user verify thourgh email, it will be 0ed
+							db.db('lienet').collection('authors').insertOne({
+								...author,
+								password: hash,
+								verification_id
+							}, (err, result) => {
+								if (err) throw err;
+								else {
+									db.close();
+									fs.readFile(
+										path.join(__dirname, 'verificationMail.html'),
+										'utf8',
+										(err, content) => {
+											if (err) throw err;
+											else {
+												utils.generateTokenCookie(author.mail, res, (token) => {
+													let server =
+														process.env.NODE_ENV == 'production'
+															? 'https://lieneteu.herokuapp.com'
+															: 'http://localhost:6969';
+
+													let params = {
+														verification_id: verification_id.toString(),
+														origin: server,
+														token
+													};
+													console.log('--------------- before send mail');
+
 													mailer.SendMail({
 														to: author.mail,
 														subject: 'תודה שנרשמת לlienet',
-														content
+														content,
+														params: params
 													});
-													res.clearCookie('token');
-													utils.generateTokenCookie(mail, res);
 													res.send({ status: 'success', message: 'success' });
-												}
+												});
 											}
-										);
-									}
-								});
+										}
+									);
+								}
+							});
 						}
 					});
 				}
@@ -165,13 +180,27 @@ app.post('/Register', (req, res) => {
 	}
 });
 app.get('/verifyMail', utils.ensureToken, (req, res) => {
-	let mail = utile.sanitize(req.mail);
-	var setParams = { $set: { isVerifiedMail: true } };
-	db.db('lienet').collection('authors').UpdateOne({ mail }, setParams, (err, result) => {
+	let mail = utils.sanitize(req.mail);
+	MongoClient.connect(dbUrl, (err, db) => {
 		if (err) throw err;
 		else {
-			db.close();
-			res.status(200).send(result);
+			db.db('lienet').collection('authors').findOne({ mail }, (err, author) => {
+				if (err) throw err;
+				else {
+					const reqVerificationId = req.query.verification_id;
+					if (author.verification_id == reqVerificationId) {
+						const setParams = { $set: { verification_id: -1 } }; //-1 means user verified
+
+						db.db('lienet').collection('authors').updateOne({ mail }, setParams, (err, result) => {
+							if (err) throw err;
+							else {
+								db.close();
+								res.status(200).send('המייל אומת בהצלחה!');
+							}
+						});
+					}
+				}
+			});
 		}
 	});
 });
@@ -242,13 +271,12 @@ app.post('/postArticle', utils.ensureToken, async (req, res, next) => {
 		}
 	});*/
 	try {
-		client = await MongoClient.connect(dbUrl);
-		const db = db('lienet');
+		conn = await MongoClient.connect(dbUrl);
+		const db = conn.db('lienet');
 		let authorsCollection = db.collection('authors');
 		let articlesCollection = db.collection('articles');
-		//  let result = await authorsCollection.find();
-		let isVerified = await authorsCollection.findOne({ mail: article.mail }).isVerifiedMail;
-		if (isVerified) {
+		let user = await authorsCollection.findOne({ mail: req.mail });
+		if (user.verification_id == -1) {
 			let maxId = await articlesCollection.find().sort({ id: -1 }).limit(1).toArray()[0];
 			let res = await articlesCollection.insertOne({ id: maxId + 1, ...article });
 			res.send({ status: 'success', message: 'the article published' });
@@ -260,7 +288,7 @@ app.post('/postArticle', utils.ensureToken, async (req, res, next) => {
 		console.error(err);
 	} finally {
 		// catch any mongo error here
-		client.close();
+		conn.close();
 	} // make sure to close your connection after
 });
 app.get('/admin', utils.ensureToken, (req, res, next) => {
