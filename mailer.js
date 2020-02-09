@@ -46,5 +46,3 @@ class Mailer {
 	}
 }
 module.exports = Mailer;
-Mailer = new Mailer('lienetmail@gmail.com');
-Mailer.SendMail({ to: 'drunktolstoy@gmail.com', subject: 'sup nigga', isHTML: true, content: '<b>ssssup</b>' });

@@ -10,6 +10,7 @@ const compression = require('compression');
 const bcrypt = require('bcrypt');
 const cookieParser = require('cookie-parser');
 const jwt = require('jsonwebtoken');
+const fs = require('fs');
 
 /**************app modules************************/
 const utils = require('./utils');
@@ -128,17 +129,26 @@ app.post('/Register', (req, res) => {
 							db
 								.db('lienet')
 								.collection('authors')
-								.insertOne({ ...author, password: hash }, (err, result) => {
+								.insertOne({ ...author, password: hash, isVerifiedMail: false }, (err, result) => {
 									if (err) throw err;
 									else {
 										db.close();
-										res.send({ status: 'success', message: 'success' });
-										mailer.SendMail({
-											to: author.mail,
-											subject: 'תודה שנרשמת לlienet',
-											content:
-												'הרובוטים שלנו סורקים ברגעים אלו את חשבון הפייסבוק, הטוויטר והמייל שלך! במידה ולא נמצא שום דבר קוהרנטי, אתה בפנים!'
-										});
+										fs.readFile(
+											path.join(__dirname, 'verificationMail.html'),
+											'utf8',
+											(err, content) => {
+												if (err) throw err;
+												else {
+													mailer.SendMail({
+														to: author.mail,
+														subject: 'תודה שנרשמת לlienet',
+														content
+													});
+													res.clearCookie('token');
+													res.send({ status: 'success', message: 'success' });
+												}
+											}
+										);
 									}
 								});
 						}
@@ -152,6 +162,17 @@ app.post('/Register', (req, res) => {
 			.status(500)
 			.send({ status: 'failed', error: "server error :( try again later, maybe we'll fix it. maybe not" });
 	}
+});
+app.get('verifyMail', utils.ensureToken, (req, res) => {
+	let mail = utile.sanitize(req.mail);
+	var setParams = { $set: { isVerifiedMail: true } };
+	db.db('lienet').collection('authors').UpdateOne({ mail }, setParams, (err, result) => {
+		if (err) throw err;
+		else {
+			db.close();
+			res.status(200).send(result);
+		}
+	});
 });
 app.post('/signIn', (req, res) => {
 	//TODO://callback hell
@@ -214,8 +235,10 @@ app.get('/adminDetails', utils.ensureToken, (req, res, next) => {
 		}
 	});
 });
-app.post('/postArticle', utils.ensureToken, (req, res, next) => {
-	MongoClient.connect(dbUrl, (err, db) => {
+app.post('/postArticle', utils.ensureToken, async (req, res, next) => {
+	let article = utils.sanitize(req.body);
+
+	/*	MongoClient.connect(dbUrl, (err, db) => {
 		if (err) console.log(err);
 		else {
 			let article = utils.sanitize(req.body);
@@ -230,7 +253,28 @@ app.post('/postArticle', utils.ensureToken, (req, res, next) => {
 				});
 			});
 		}
-	});
+	});*/
+	try {
+		client = await MongoClient.connect(dbUrl);
+		const db = db('lienet');
+		let authorsCollection = db.collection('authors');
+		let articlesCollection = db.collection('articles');
+		//  let result = await authorsCollection.find();
+		let isVerified = await authorsCollection.findOne({ mail: article.mail }).isVerifiedMail;
+		if (isVerified) {
+			let maxId = await articlesCollection.find().sort({ id: -1 }).limit(1).toArray()[0];
+			let res = await articlesCollection.insertOne({ id: maxId + 1, ...article });
+			res.send({ status: 'success', message: 'the article published' });
+		} else {
+			res.send({ status: 'failed', message: 'you have to validate your email in the mail we sent you' });
+		}
+		return result.toArray();
+	} catch (err) {
+		console.error(err);
+	} finally {
+		// catch any mongo error here
+		client.close();
+	} // make sure to close your connection after
 });
 app.get('/admin', utils.ensureToken, (req, res, next) => {
 	res.sendFile(path.resolve('admin', 'public', 'index.html'));
