@@ -37,7 +37,12 @@ app.get('/article', (req, res) => {
 					//saves in the articles colletion only the mail of the author,this is the identifier per author.
 					dbo.collection('authors').findOne({ mail: articleObj.author }, (err, author) => {
 						if (err) throw err;
-						else {
+						else if (author == null) {
+							res.send({
+								...articleObj,
+								author: { firstName: 'מערכת', lastName: 'Lienet', mail: 'lienetmail@protonmail.com' }
+							});
+						} else {
 							res.send({ ...articleObj, author });
 							db.close();
 						}
@@ -219,8 +224,9 @@ app.post('/signIn', (req, res) => {
 					} else {
 						bcrypt.compare(enteredPassword, userFromDb.password, function(err, HashCompareRes) {
 							if (HashCompareRes) {
-								utils.generateTokenCookie(mail, res);
-								res.send({ status: 'success', message: 'success' });
+								utils.generateTokenCookie(mail, res, () => {
+									res.send({ status: 'success', message: 'success' });
+								});
 							} else {
 								res.send({ isSinged: 'failed', message: 'wrong password' });
 							}

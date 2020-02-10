@@ -22,7 +22,7 @@ let utils = {
 		if (typeof actualToken !== 'undefined') {
 			jwt.verify(actualToken, process.env.JWT_SECRET, (err, result) => {
 				if (err || !result) {
-					res.status(403).send('not authed!');
+					res.status(403).send('tokenExpired!');
 				} else if (result && (!result.access || result.access == 'unauthenticated')) {
 					res.status(403).send('unauthenticated token');
 				} else if (result && result.access == 'authenticated') {
@@ -40,6 +40,7 @@ let utils = {
 		jwt.sign({ mail, access: 'authenticated' }, process.env.JWT_SECRET, { expiresIn: '2 hours' }, (err, token) => {
 			let now = new Date();
 			var expDate = now.setHours(now.getHours() + 2);
+
 			res.cookie('token', token, {
 				sameSite: true,
 				maxAge: expDate,
