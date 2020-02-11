@@ -283,13 +283,13 @@ app.post('/postArticle', utils.ensureToken, async (req, res, next) => {
 		let articlesCollection = db.collection('articles');
 		let user = await authorsCollection.findOne({ mail: req.mail });
 		if (user.verification_id == -1) {
-			let maxId = await articlesCollection.find().sort({ id: -1 }).limit(1).toArray()[0];
-			let res = await articlesCollection.insertOne({ id: maxId + 1, ...article });
-			res.send({ status: 'success', message: 'the article published' });
+			let userWithMaxId = await articlesCollection.find().sort({ id: -1 }).limit(1).toArray();
+			let maxId = parseInt(userWithMaxId[0].id);
+			await articlesCollection.insertOne({ id: maxId + 1, ...article });
+			res.send({ status: 'success', message: 'published', id: maxId + 1 });
 		} else {
-			res.send({ status: 'failed', message: 'you have to validate your email in the mail we sent you' });
+			res.send({ status: 'failed', message: 'mail not verified' });
 		}
-		return result.toArray();
 	} catch (err) {
 		console.error(err);
 	} finally {

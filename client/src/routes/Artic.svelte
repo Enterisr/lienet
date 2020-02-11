@@ -49,20 +49,22 @@
       });
   }
 
-  async function GetArticle() {
+  function GetArticle() {
     return fetch(originAddr + "/article?num=" + article)
       .then(dat => {
-        console.log(dat);
         return dat.json();
       })
       .then(dat => {
+        if (dat.text == "404") {
+          throw new Error("404 - article not found!");
+        }
         GetComments();
         title = dat.title;
-        console.log(dat);
         return dat;
       })
       .catch(err => {
         alert(err);
+        window.location.href = Utils.GetServerAdress();
       });
   }
 
@@ -267,8 +269,8 @@
       width: 100vw;
       height: 3.5em;
       left: 0;
+      margin-bottom: 3.5em;
       justify-content: center;
-      margin-bottom: 10vh;
       padding: 0;
       position: sticky;
       box-shadow: none;

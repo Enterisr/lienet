@@ -1,16 +1,21 @@
 <script>
-  $: user = {};
+  import Utils from "./Utils.js";
   import MediumEditor from "medium-editor";
   import { onMount } from "svelte";
+  import { fly } from "svelte/transition";
   import moment from "moment";
   import MediumEditorColorPickerButtons from "medium-editor-colorpicker-buttons";
+
   let editor;
+  $: user = {};
   $: isGotAnswer = false;
+  $: postSubmitMessage = "";
   let articleScheme = { title: "", date: moment(), subTitle: "", text: "" };
-  // Add it to the Statamic object.
+
   onMount(async () => {
     user = await getAuthorDetials();
     isGotAnswer = true;
+    //mount medium editor plugin
     const colorPlugin = MediumEditorColorPickerButtons.get(MediumEditor);
     const TextColorButtonClass = colorPlugin.TextColorButtonClass;
     editor = new MediumEditor(".editor", {
@@ -48,16 +53,33 @@
         return aut;
       });
   }
-  function SubmitArticle() {
+  async function SubmitArticle() {
+    let ansJsoned = "";
     articleScheme.text = editor.getContent();
     articleScheme.author = articleScheme.author.mail;
-    fetch("/postArticle", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(articleScheme)
-    }).then(res => {
-      return res.json();
-    });
+    try {
+      let ans = await fetch("/postArticle", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(articleScheme)
+      });
+      ansJsoned = await ans.json();
+      console.table(ansJsoned);
+    } catch (ex) {
+      console.error(ex);
+    } finally {
+      if (ansJsoned.status == "failed") {
+        if (ansJsoned.message == "mail not verified") {
+          postSubmitMessage = "יש לאמת את המייל לפני הגשת כתבה :(";
+        } else {
+          postSubmitMessage = "הפרסום כשל, כנראה כי אתה לא כותב מספיק טוב";
+        }
+      } else {
+        postSubmitMessage = "הכתבה פורסמה!";
+        const url = Utils.GetServerAdress() + "/#/article=" + ansJsoned.id;
+        window.open(url, "_blank");
+      }
+    }
   }
   setInterval(() => {
     articleScheme.date = articleScheme.date.add("1", "second");
@@ -114,8 +136,31 @@
     padding: 0.5em;
     background: #252525;
     color: #fa9b00;
-
     margin: auto;
+  }
+  .postSubmitMessage-div {
+    border-radius: 15px 0px 0px 15px;
+    text-align: center;
+    background-color: rgba(255, 0, 0, 0.77);
+    position: absolute;
+    padding: 0.5em;
+    color: white;
+    right: 0;
+  }
+  .popup-exit-button {
+    background: none;
+    color: black;
+    position: relative;
+    cursor: pointer;
+    font-weight: 500;
+    margin: 0px;
+    padding: 0;
+    width: 1em;
+    font-size: 1em;
+    height: 1em;
+    line-height: 0;
+    border: none;
+    font-family: cursive;
   }
   @media screen and (max-height: 600px) {
     .titles-div {
@@ -134,10 +179,20 @@
     <h1>חכי רגע...</h1>
   {:else}
     <h1>היי {user.firstName}!</h1>
-    <p>
-      כתוב את הכתבה שלך כאן למטה, ואם היא עומדת בסנטדרנט האיכות המחמיר של
-      lienet, היא אפילו תפורסם!
-    </p>
+    {#if postSubmitMessage}
+      <div
+        transition:fly={{ x: 200, duration: 400 }}
+        class="postSubmitMessage-div">
+        {postSubmitMessage}
+        <button
+          class="popup-exit-button"
+          on:click={() => {
+            postSubmitMessage = '';
+          }}>
+          x
+        </button>
+      </div>
+    {/if}
   {/if}
   <div class="titles-div">
     <input bind:value={articleScheme.title} placeholder="כותרת" />
