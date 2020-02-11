@@ -37,7 +37,6 @@ class Mailer {
 		return await oauth2Client.getAccessToken();
 	}
 	SendMail({ to, subject, isHTML, content, params }) {
-		console.log('---------------send mail');
 		try {
 			if (params) {
 				content = this.EmbedMailParams(params, content);
