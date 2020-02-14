@@ -35,7 +35,18 @@
   }
   function GenerateRandomNumber() {
     //let the api think this is not scraping..
-    return Math.floor(Math.random() * 300 + 100);
+    return Math.floor(Math.random() * 500 + 200);
+  }
+  function ChoosePohtoForArticle(photoUrl) {
+    if (photoUrl) {
+      return photoUrl;
+    } else {
+      return (
+        `https://source.unsplash.com/${GenerateRandomNumber()}` +
+        `x` +
+        `${GenerateRandomNumber()}/?politics,israel,holystate,netanyahu,usa,street,trump`
+      );
+    }
   }
 </script>
 
@@ -194,9 +205,8 @@
 
       <div class="img-div">
 
-        <img
-          src={i == 0 ? 'https://source.unsplash.com/900x900/?sport,politics,fashion,israel,holystate,netanyahu,usa,street,trump' : `https://source.unsplash.com/${GenerateRandomNumber()}` + `x` + `${GenerateRandomNumber()}/?politics,israel,holystate,netanyahu,usa,street,trump`}
-          alt="איש סגול רע" />
+        <img src={ChoosePohtoForArticle(artic.photoUrl)} alt="איש סגול רע" />
+        {@debug artic}
       </div>
       <div class="title-div">
         <span

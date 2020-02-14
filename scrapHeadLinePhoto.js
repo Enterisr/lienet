@@ -1,43 +1,60 @@
 const utils = require('./utils');
+var url = require('url');
+
 const puppeteer = require('puppeteer-extra');
 const scraper = {
-	FindMatchingPhoto: async function FindMatchingPhoto(whatToSearch) {
-		const browser = await puppeteer.launch({
-			headless: false,
-			slowMo: 0,
-			ignoreHTTPSErrors: true,
-			args: [
-				/*'--proxy-server=213.6.225.134:61809',*/
-				'--no-sandbox',
+	ScrapPhotoForArticle: async function ScrapPhotoForArticle(article) {
+		let mostUsedWord = this.FindMostUsedWord(article);
 
-				'--disable-setuid-sandbox',
-				' --disable-web-security',
-				' -user-data-dir'
-			]
-		});
-		var page = await browser.newPage();
-		try {
-			await page.setUserAgent(
-				'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36'
-			);
+		let url = await this.FindMatchingPhoto(mostUsedWord);
+		return url;
+	},
+	FindMatchingPhoto: function FindMatchingPhoto(whatToSearch) {
+		return new Promise(async (resolve, reject) => {
+			const browser = await puppeteer.launch({
+				headless: true,
+				slowMo: 0,
+				ignoreHTTPSErrors: true,
+				args: [
+					/*'--proxy-server=213.6.225.134:61809',*/
+					'--no-sandbox',
 
-			await page.goto(
-				`https://www.bing.com/images/search?pq=benja&sc=8-5&cvid=86AB5949AF4B47A78E97801E933F04DC&sp=1&q=${whatToSearch}&qft=+filterui:license-L2_L3_L4&FORM=IRFLTR`
-			);
-			await page.waitForSelector('#b_content img');
-			await page.click('#b_content img');
-			let bigImgSrc = await page.$eval('img', (elm) => {
-				return elm.src;
+					'--disable-setuid-sandbox',
+					' --disable-web-security',
+					' -user-data-dir'
+				]
 			});
+			var page = await browser.newPage();
+			try {
+				await page.setUserAgent(
+					'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36'
+				);
 
-			return bigImgSrc;
-		} catch (ex) {
-			console.error(ex);
-			console.log('trying again...');
-			FindMatchingPhoto(whatToSearch);
-		} finally {
-			browser.close();
-		}
+				await page.goto(
+					`https://www.bing.com/images/search?pq=benja&sc=8-5&cvid=86AB5949AF4B47A78E97801E933F04DC&sp=1&q=${whatToSearch}&qft=+filterui:license-L2_L3_L4&FORM=IRFLTR`
+				);
+				await page.waitForSelector('#b_content img');
+				await page.click('#b_content img');
+				/*await page.click('iframe');
+				await page.waitForSelector('.imgContainer img');
+				let bigImgSrc = await page.$eval('.imgContainer img', (elm) => {
+					elm.focus();
+					return elm.src;
+				});
+				console.log(bigImgSrc);*/
+				let uri = await page.evaluate(() => location.href);
+				var url_parts = url.parse(uri, true);
+				var mediaurl = url_parts.query.mediaurl;
+				resolve(mediaurl);
+				return mediaurl;
+			} catch (ex) {
+				console.error(ex);
+				console.log('trying again...');
+				await FindMatchingPhoto(whatToSearch);
+			} finally {
+				browser.close();
+			}
+		});
 	},
 	FindMostUsedWord: function FindMostUsedWord(article) {
 		let words = article.split(' ');
@@ -51,14 +68,14 @@ const scraper = {
 		});
 		let mostUsedWord = {};
 		for (const word in wordsMap) {
-			if (wordsMap[word] > mostUsedWord.count || !mostUsedWord.count) {
+			if ((wordsMap[word] > mostUsedWord.count || !mostUsedWord.count) && this.IsReallyWord(word)) {
 				mostUsedWord = { wordString: word, count: wordsMap[word] };
 			}
 		}
-		return mostUsedWord;
+		return mostUsedWord.wordString;
 	},
-	ExtractWordsWithDefiniteness: function ExtractWordsWithDefiniteness(article) {
-		//TOOD:
+	IsReallyWord: function IsReallyWord(word) {
+		return word != 'את' && word != 'של' && word != 'על';
 	}
 };
-console.log(scraper.FindMostUsedWord(' אני אוהב שוקולד ועוגות גבינה למרות שלגבי החלק של ה גבינה אני לא בטוח גבינה !'));
+module.exports = scraper;

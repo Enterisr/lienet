@@ -15,6 +15,7 @@ const fs = require('fs');
 /**************app modules************************/
 const utils = require('./utils');
 const Mailer = require('./mailer');
+const Scarper = require('./scrapHeadLinePhoto');
 
 require('dotenv').config();
 const saltRounds = 10;
@@ -63,7 +64,7 @@ app.get('/titles', (req, res) => {
 			db
 				.db('lienet')
 				.collection('articles')
-				.find({}, { projection: { title: 1, id: 1 } })
+				.find({}, { projection: { title: 1, id: 1, photoUrl: 1 } })
 				.sort({ id: -1 })
 				.toArray((err, result) => {
 					if (result) res.send(result);
@@ -259,23 +260,6 @@ app.get('/adminDetails', utils.ensureToken, (req, res, next) => {
 });
 app.post('/postArticle', utils.ensureToken, async (req, res, next) => {
 	let article = utils.sanitize(req.body);
-
-	/*	MongoClient.connect(dbUrl, (err, db) => {
-		if (err) console.log(err);
-		else {
-			let article = utils.sanitize(req.body);
-			db.db('lienet').collection('articles').find().sort({ id: -1 }).limit(1).toArray((err, articleWithMaxId) => {
-				const newId = articleWithMaxId[0].id + 1;
-				db.db('lienet').collection('articles').insertOne({ id: newId, ...article }, (err, result) => {
-					if (err) throw err;
-					else {
-						db.close();
-						res.status(200).send(result);
-					}
-				});
-			});
-		}
-	});*/
 	try {
 		conn = await MongoClient.connect(dbUrl);
 		const db = conn.db('lienet');
@@ -285,7 +269,12 @@ app.post('/postArticle', utils.ensureToken, async (req, res, next) => {
 		if (user.verification_id == -1) {
 			let userWithMaxId = await articlesCollection.find().sort({ id: -1 }).limit(1).toArray();
 			let maxId = parseInt(userWithMaxId[0].id);
-			await articlesCollection.insertOne({ id: maxId + 1, ...article });
+			let photoUrl = await Scarper.ScrapPhotoForArticle(article.text);
+			await articlesCollection.insertOne({
+				id: maxId + 1,
+				...article,
+				photoUrl
+			});
 			res.send({ status: 'success', message: 'published', id: maxId + 1 });
 		} else {
 			res.send({ status: 'failed', message: 'mail not verified' });
