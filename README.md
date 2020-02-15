@@ -10,11 +10,10 @@ You can find it here [https://lieneteu.herokuapp.com/](https://lieneteu.herokuap
  - [x] Authors can create articles with rich text editor in-app 
  - [x] share Buttons and google analytics integration
  - [x] mobile friendly
- 
+ - [x] Complete the scraping of images from search engines to articles
 
 TODO:
  - [ ] let user see all the articles of the author
- - [ ] Complete the scraping of images from search engines to articles
  - [ ] add delete/edit article funcationality
  - [ ] order articles in sub categories
  - [ ] add tags functionallty
