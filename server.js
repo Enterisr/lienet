@@ -1,7 +1,8 @@
 /**************node modules************************/
+require('dotenv').config();
 const express = require('express');
 const MongoClient = require('mongodb').MongoClient;
-const dbUrl = process.env.MONGOLAB_URI;
+const dbUrl =process.env.MONGOLAB_URI;
 const app = express();
 const port = process.env.PORT || 6969;
 const cors = require('cors');
@@ -16,8 +17,6 @@ const fs = require('fs');
 const utils = require('./utils');
 const Mailer = require('./mailer');
 const Scarper = require('./scrapHeadLinePhoto');
-
-require('dotenv').config();
 const saltRounds = 10;
 
 mailer = new Mailer('lienetmail@gmail.com');

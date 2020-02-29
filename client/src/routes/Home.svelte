@@ -93,6 +93,7 @@
 
   li:first-child span {
     color: rgb(44, 44, 44);
+    max-width: 50%;
   }
   li:first-child span:hover {
     color: rgb(0, 0, 0);
@@ -177,16 +178,18 @@
       margin: 0;
       position: relative;
       top: 0;
+      max-width: none;
       height: 50%;
       display: inline-block;
     }
     li:first-child .img-div {
-      height: calc(100% - 2em);
+      height: calc(100% - 2.5em);
     }
 
     li:first-child span {
       width: 100%;
       top: 50%;
+      max-width: none;
     }
     li:first-child img {
       border-radius: 0;
@@ -206,7 +209,6 @@
       <div class="img-div">
 
         <img src={ChoosePohtoForArticle(artic.photoUrl)} alt="איש סגול רע" />
-        {@debug artic}
       </div>
       <div class="title-div">
         <span

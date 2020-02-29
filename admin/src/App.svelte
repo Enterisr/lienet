@@ -97,20 +97,22 @@
   h1 {
     color: #ff0800;
     text-transform: uppercase;
-    font-size: 4em;
+    font-size: 3em;
     font-weight: 100;
   }
   .editor {
-    height: 40vh;
+    height: 50vh;
     text-align: right;
     padding: 1em;
-    margin: 2em 10vh;
+    margin: 2vh auto;
+    width: 67vw;
     background: rgb(251, 251, 251);
     box-shadow: 0px 0px 60px -36px rgb(145, 145, 145),
       0px 0px 60px -36px rgb(145, 145, 145);
     border-radius: 0.4em;
     transition: ease all 0.4s;
   }
+
   .editor:focus {
     box-shadow: 0px 0px 0px 2px rgba(163, 221, 255, 1),
       0px 0px 0px 6px rgba(163, 221, 255, 0.397);
@@ -129,6 +131,10 @@
   }
   .titles-div textarea {
     display: block;
+    display: block;
+    width: auto !important;
+    min-height: 3em;
+    max-height: 10em;
   }
   .date-p {
     width: 10em;
@@ -162,14 +168,30 @@
     border: none;
     font-family: cursive;
   }
-  @media screen and (max-height: 600px) {
+  .submit-button {
+    color: #fff;
+    background-color: rgb(101, 178, 255);
+    outline: none;
+    border: none;
+    padding: 1em;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.5s all ease;
+  }
+  .submit-button:hover {
+    box-shadow: 0px 0px 0px 2px rgba(163, 221, 255, 1),
+      0px 0px 0px 6px rgba(163, 221, 255, 0.397);
+    outline: none;
+  }
+
+  @media screen and (max-width: 600px) {
     .titles-div {
       width: 100%;
     }
     .editor {
       padding: 1vh;
-      margin: 1vh;
-      width: 90%;
+      margin: 2vw auto;
+      width: 95%;
     }
   }
 </style>
@@ -206,6 +228,6 @@
 
   </p>
   <div bind:this={editor} class="editor">הכתבה המדהימה שלי</div>
-  <button on:click={SubmitArticle}>הגש כתבה!</button>
+  <button class="submit-button" on:click={SubmitArticle}>הגש כתבה!</button>
 
 </main>
