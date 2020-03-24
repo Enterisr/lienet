@@ -17,4 +17,5 @@ TODO:
  - [ ] add delete/edit article funcationality
  - [ ] order articles in sub categories
  - [ ] add tags functionallty
+ - [ ] Scraping photo needs to be in separate dyno.
  - [ ] ask google again to put ads on it

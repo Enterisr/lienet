@@ -2,7 +2,7 @@
 require('dotenv').config();
 const express = require('express');
 const MongoClient = require('mongodb').MongoClient;
-const dbUrl =process.env.MONGOLAB_URI;
+const dbUrl = process.env.MONGOLAB_URI;
 const app = express();
 const port = process.env.PORT || 6969;
 const cors = require('cors');
@@ -12,19 +12,20 @@ const bcrypt = require('bcrypt');
 const cookieParser = require('cookie-parser');
 const jwt = require('jsonwebtoken');
 const fs = require('fs');
+const Queue = require('bull');
+let REDIS_URL = process.env.REDIS_URL || 'redis://127.0.0.1:6379';
 
 /**************app modules************************/
 const utils = require('./utils');
 const Mailer = require('./mailer');
 const Scarper = require('./scrapHeadLinePhoto');
 const saltRounds = 10;
-
 mailer = new Mailer('lienetmail@gmail.com');
-
 app.use(cookieParser());
 app.use(compression());
 app.use(cors());
 app.use(express.json());
+let ScrapQueue = new Queue('scraper', REDIS_URL);
 
 app.get('/article', (req, res) => {
 	MongoClient.connect(dbUrl, function(err, db) {
@@ -116,6 +117,29 @@ app.post('/postComment', (req, res) => {
 		}
 	});
 });
+function SendMail() {
+	fs.readFile(path.join(__dirname, 'verificationMail.html'), 'utf8', (err, content) => {
+		if (err) throw err;
+		else {
+			utils.generateTokenCookie(author.mail, res, (token) => {
+				let server =
+					process.env.NODE_ENV == 'production' ? 'https://lieneteu.herokuapp.com' : 'http://localhost:6969';
+				let params = {
+					verification_id: verification_id.toString(),
+					origin: server,
+					token
+				};
+				mailer.SendMail({
+					to: author.mail,
+					subject: 'תודה שנרשמת לlienet',
+					content,
+					params: params
+				});
+				res.send({ status: 'success', message: 'success' });
+			});
+		}
+	});
+}
 app.post('/Register', (req, res) => {
 	//TODO://callback hell
 	try {
@@ -131,7 +155,8 @@ app.post('/Register', (req, res) => {
 							db.close();
 							res.send({ status: 'failed', message: 'mail already registered' });
 						} else {
-							let verification_id = Math.floor(Math.random() * 1000000) + 1; //when the user verify thourgh email, it will be 0ed
+							//when the user verify thourgh email, verification_id becomes -1
+							let verification_id = Math.floor(Math.random() * 1000000) + 1;
 							db.db('lienet').collection('authors').insertOne({
 								...author,
 								password: hash,
@@ -140,36 +165,7 @@ app.post('/Register', (req, res) => {
 								if (err) throw err;
 								else {
 									db.close();
-									fs.readFile(
-										path.join(__dirname, 'verificationMail.html'),
-										'utf8',
-										(err, content) => {
-											if (err) throw err;
-											else {
-												utils.generateTokenCookie(author.mail, res, (token) => {
-													let server =
-														process.env.NODE_ENV == 'production'
-															? 'https://lieneteu.herokuapp.com'
-															: 'http://localhost:6969';
-
-													let params = {
-														verification_id: verification_id.toString(),
-														origin: server,
-														token
-													};
-													console.log('--------------- before send mail');
-
-													mailer.SendMail({
-														to: author.mail,
-														subject: 'תודה שנרשמת לlienet',
-														content,
-														params: params
-													});
-													res.send({ status: 'success', message: 'success' });
-												});
-											}
-										}
-									);
+									SendMail();
 								}
 							});
 						}
@@ -268,7 +264,7 @@ app.post('/postArticle', utils.ensureToken, async (req, res, next) => {
 		if (user.verification_id == -1) {
 			let userWithMaxId = await articlesCollection.find().sort({ id: -1 }).limit(1).toArray();
 			let maxId = parseInt(userWithMaxId[0].id);
-			let photoUrl = await Scarper.ScrapPhotoForArticle(article.text);
+			let photoUrl = await ScrapQueue.add(article);
 			await articlesCollection.insertOne({
 				id: maxId + 1,
 				...article,
@@ -288,14 +284,15 @@ app.post('/postArticle', utils.ensureToken, async (req, res, next) => {
 app.get('/admin', utils.ensureToken, (req, res, next) => {
 	res.sendFile(path.resolve('admin', 'public', 'index.html'));
 });
-
 app.get('/', (req, res) => {
 	res.sendFile(path.resolve('client', 'public', 'index.html'));
 });
 app.use('/admin', express.static(path.join(__dirname, 'admin/public')));
 app.use('/admin', express.static(path.join(__dirname, 'admin/public/build')));
-
 app.use(express.static(path.join(__dirname, 'client/public')));
 app.use(express.static(path.join(__dirname, 'client/public/build')));
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));
+ScrapQueue.process(20, async (article) => {
+	return await Scarper.ScrapPhotoForArticle(article.text);
+});
