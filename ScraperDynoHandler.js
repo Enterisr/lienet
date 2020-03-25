@@ -8,9 +8,9 @@ let REDIS_URL = process.env.REDIS_URL || 'redis://127.0.0.1:6379';
 let workers = process.env.WEB_CONCURRENCY || 2;
 
 let maxJobsPerWorker = 20;
-
-module.exports.Process = Process;
-function Process(article) {
+/*
+module.exports.Process = myEmitter;
+function Process() {
 	function start() {
 		let scarpQueue = new Queue('scraper', REDIS_URL);
 		scarpQueue.process(maxJobsPerWorker, async (article) => {
@@ -24,3 +24,4 @@ function Process(article) {
 	}
 	throng({ workers, start });
 }
+*/

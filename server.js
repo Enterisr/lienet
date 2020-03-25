@@ -5,19 +5,19 @@ const MongoClient = require('mongodb').MongoClient;
 const dbUrl = process.env.MONGOLAB_URI;
 const app = express();
 const port = process.env.PORT || 6969;
+let REDIS_URL = process.env.REDIS_URL || 'redis://127.0.0.1:6379';
 const cors = require('cors');
 const path = require('path');
 const compression = require('compression');
 const bcrypt = require('bcrypt');
 const cookieParser = require('cookie-parser');
-const jwt = require('jsonwebtoken');
 const fs = require('fs');
-
+let Queue = require('bull');
 /**************app modules************************/
 const utils = require('./utils');
 const Mailer = require('./mailer');
 const Scarper = require('./scrapHeadLinePhoto');
-const processScraping = require('./ScraperDynoHandler').Process;
+let ScarperQueue = new Queue('scraper', REDIS_URL);
 const saltRounds = 10;
 mailer = new Mailer('lienetmail@gmail.com');
 app.use(cookieParser());
@@ -262,9 +262,9 @@ app.post('/postArticle', utils.ensureToken, async (req, res, next) => {
 		if (user.verification_id == -1) {
 			let userWithMaxId = await articlesCollection.find().sort({ id: -1 }).limit(1).toArray();
 			let maxId = parseInt(userWithMaxId[0].id);
-			processScraping(article);
+			article.id = maxId + 1;
+			ScarperQueue.add(article);
 			await articlesCollection.insertOne({
-				id: maxId + 1,
 				photoUrl: 'https://lieneteu.herokuapp.com/logo_transparent.png',
 				...article
 				//temporary image until suitalbe image will be found... change this
@@ -280,6 +280,16 @@ app.post('/postArticle', utils.ensureToken, async (req, res, next) => {
 		conn.close();
 	} // make sure to close your connection after
 });
+async function StartSraping() {
+	scarpQueue.process(maxJobsPerWorker, async (article) => {
+		let suitablePhotoURL = await Scarper.ScrapPhotoForArticle(article.text);
+		conn = await MongoClient.connect(dbUrl);
+		console.log(`opening db...`);
+		const db = conn.db('lienet');
+		let articlesCollection = db.collection('articles');
+		articlesCollection.updateOne({ id: article.id }, { $set: { photoUrl: suitablePhotoURL } });
+	});
+}
 app.get('/admin', utils.ensureToken, (req, res, next) => {
 	res.sendFile(path.resolve('admin', 'public', 'index.html'));
 });
