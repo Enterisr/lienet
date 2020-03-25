@@ -1,19 +1,16 @@
 let throng = require('throng');
 let Queue = require('bull');
 let Scarper = require('./scrapHeadLinePhoto');
-const EventEmitter = require('events');
 let MongoClient = require('mongodb').MongoClient;
-require('net').createServer().listen(); //keep alive...
+require('net').createServer().listen(); //keep alive... probably horrible way to do that...
 const dbUrl = process.env.MONGOLAB_URI;
 let REDIS_URL = process.env.REDIS_URL || 'redis://127.0.0.1:6379';
 let workers = process.env.WEB_CONCURRENCY || 2;
 
 let maxJobsPerWorker = 20;
-class MyEmitter extends EventEmitter {}
-const myEmitter = new MyEmitter();
-module.exports.Process = myEmitter;
 
-myEmitter.on('Process', (article) => {
+module.exports.Process = Process;
+function Process(article) {
 	function start() {
 		let scarpQueue = new Queue('scraper', REDIS_URL);
 		scarpQueue.process(maxJobsPerWorker, async (article) => {
@@ -26,4 +23,4 @@ myEmitter.on('Process', (article) => {
 		});
 	}
 	throng({ workers, start });
-});
+}
