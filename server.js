@@ -262,7 +262,7 @@ app.post('/postArticle', utils.ensureToken, async (req, res, next) => {
 		if (user.verification_id == -1) {
 			let userWithMaxId = await articlesCollection.find().sort({ id: -1 }).limit(1).toArray();
 			let maxId = parseInt(userWithMaxId[0].id);
-			processScraping.emit(article);
+			processScraping.emit('Process', article);
 			await articlesCollection.insertOne({
 				id: maxId + 1,
 				photoUrl: 'https://lieneteu.herokuapp.com/logo_transparent.png',

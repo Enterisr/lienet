@@ -10,20 +10,21 @@ let workers = process.env.WEB_CONCURRENCY || 2;
 let maxJobsPerWorker = 20;
 class MyEmitter extends EventEmitter {}
 const myEmitter = new MyEmitter();
-
-myEmitter.on('Process', (article) => {
-	function start() {
-		let scarpQueue = new Queue('scraper', REDIS_URL);
-		scarpQueue.process(maxJobsPerWorker, async (article) => {
-			let suitablePhotoURL = await Scarper.ScrapPhotoForArticle(article.text);
-			conn = await MongoClient.connect(dbUrl);
-			console.log(`opening db...`);
-			const db = conn.db('lienet');
-			let articlesCollection = db.collection('articles');
-			articlesCollection.updateOne({ id: article.id }, { $set: { photoUrl: suitablePhotoURL } });
-		});
-	}
-	throng({ workers, start });
-});
-
 module.exports.Process = myEmitter;
+
+while (true) {
+	myEmitter.on('Process', (article) => {
+		function start() {
+			let scarpQueue = new Queue('scraper', REDIS_URL);
+			scarpQueue.process(maxJobsPerWorker, async (article) => {
+				let suitablePhotoURL = await Scarper.ScrapPhotoForArticle(article.text);
+				conn = await MongoClient.connect(dbUrl);
+				console.log(`opening db...`);
+				const db = conn.db('lienet');
+				let articlesCollection = db.collection('articles');
+				articlesCollection.updateOne({ id: article.id }, { $set: { photoUrl: suitablePhotoURL } });
+			});
+		}
+		throng({ workers, start });
+	});
+}
