@@ -12,20 +12,18 @@ const bcrypt = require('bcrypt');
 const cookieParser = require('cookie-parser');
 const jwt = require('jsonwebtoken');
 const fs = require('fs');
-const Queue = require('bull');
-let REDIS_URL = process.env.REDIS_URL || 'redis://127.0.0.1:6379';
 
 /**************app modules************************/
 const utils = require('./utils');
 const Mailer = require('./mailer');
 const Scarper = require('./scrapHeadLinePhoto');
+const processScraping = require('./ScarperDynoHandler').Process;
 const saltRounds = 10;
 mailer = new Mailer('lienetmail@gmail.com');
 app.use(cookieParser());
 app.use(compression());
 app.use(cors());
 app.use(express.json());
-let ScrapQueue = new Queue('scraper', REDIS_URL);
 
 app.get('/article', (req, res) => {
 	MongoClient.connect(dbUrl, function(err, db) {
@@ -264,7 +262,7 @@ app.post('/postArticle', utils.ensureToken, async (req, res, next) => {
 		if (user.verification_id == -1) {
 			let userWithMaxId = await articlesCollection.find().sort({ id: -1 }).limit(1).toArray();
 			let maxId = parseInt(userWithMaxId[0].id);
-			ScrapQueue.add(article); //search for photo and add for db later...
+			//	processScraping(article); //search for photo and add for db later...
 			await articlesCollection.insertOne({
 				id: maxId + 1,
 				photoUrl: 'https://lieneteu.herokuapp.com/logo_transparent.png',
@@ -294,12 +292,3 @@ app.use(express.static(path.join(__dirname, 'client/public')));
 app.use(express.static(path.join(__dirname, 'client/public/build')));
 
 app.listen(port, () => console.log(`lienet webapp running on port ${port}`));
-ScrapQueue.process(20, async (article) => {
-	console.log('*******starting to do scraping.....*******');
-	let suitablePhotoURL = await Scarper.ScrapPhotoForArticle(article.text);
-	conn = await MongoClient.connect(dbUrl);
-	console.log(`opening db...`);
-	const db = conn.db('lienet');
-	let articlesCollection = db.collection('articles');
-	articlesCollection.updateOne({ id: article.id }, { $set: { photoUrl: suitablePhotoURL } });
-});

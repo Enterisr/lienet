@@ -38,6 +38,7 @@
 		"puppeteer-extra-plugin-stealth": "^2.4.9",
 		"querystring": "^0.2.0",
 		"redis": "^3.0.2",
-		"sirv": "^0.4.2"
+		"sirv": "^0.4.2",
+		"throng": "^4.0.0"
 	}
 }
