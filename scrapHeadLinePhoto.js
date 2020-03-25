@@ -11,6 +11,8 @@ const scraper = {
 	},
 	FindMatchingPhoto: function FindMatchingPhoto(whatToSearch) {
 		return new Promise(async (resolve, reject) => {
+			console.log('*******opening browser.....*******');
+
 			const browser = await puppeteer.launch({
 				headless: true,
 				slowMo: 0,
@@ -43,9 +45,11 @@ const scraper = {
 				});
 				console.log(bigImgSrc);*/
 				let uri = await page.evaluate(() => location.href);
+
 				var url_parts = url.parse(uri, true);
 				var mediaurl = url_parts.query.mediaurl;
 				resolve(mediaurl);
+				console.log(`found url: ${mediaurl}`);
 				return mediaurl;
 			} catch (ex) {
 				console.error(ex);
