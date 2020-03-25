@@ -1,13 +1,17 @@
 let throng = require('throng');
 let Queue = require('bull');
 let Scarper = require('./scrapHeadLinePhoto');
+const EventEmitter = require('events');
 let MongoClient = require('mongodb').MongoClient;
 const dbUrl = process.env.MONGOLAB_URI;
 let REDIS_URL = process.env.REDIS_URL || 'redis://127.0.0.1:6379';
 let workers = process.env.WEB_CONCURRENCY || 2;
 
 let maxJobsPerWorker = 20;
-function Process() {
+class MyEmitter extends EventEmitter {}
+const myEmitter = new MyEmitter();
+
+myEmitter.on('Process', (article) => {
 	function start() {
 		let scarpQueue = new Queue('scraper', REDIS_URL);
 		scarpQueue.process(maxJobsPerWorker, async (article) => {
@@ -20,5 +24,6 @@ function Process() {
 		});
 	}
 	throng({ workers, start });
-}
-module.exports.Process = Process;
+});
+
+module.exports.Process = myEmitter;

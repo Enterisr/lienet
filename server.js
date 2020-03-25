@@ -17,7 +17,7 @@ const fs = require('fs');
 const utils = require('./utils');
 const Mailer = require('./mailer');
 const Scarper = require('./scrapHeadLinePhoto');
-const processScraping = require('./ScarperDynoHandler').Process;
+const processScraping = require('./ScraperDynoHandler').Process;
 const saltRounds = 10;
 mailer = new Mailer('lienetmail@gmail.com');
 app.use(cookieParser());
@@ -262,7 +262,7 @@ app.post('/postArticle', utils.ensureToken, async (req, res, next) => {
 		if (user.verification_id == -1) {
 			let userWithMaxId = await articlesCollection.find().sort({ id: -1 }).limit(1).toArray();
 			let maxId = parseInt(userWithMaxId[0].id);
-			//	processScraping(article); //search for photo and add for db later...
+			processScraping.emit(article);
 			await articlesCollection.insertOne({
 				id: maxId + 1,
 				photoUrl: 'https://lieneteu.herokuapp.com/logo_transparent.png',
