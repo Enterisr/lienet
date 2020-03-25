@@ -3,7 +3,7 @@ const dbUrl = 'mongodb://DrunkTolstoyAdMatay:I38MwVBQkb#l@ds233198.mlab.com:3319
 const Scarper = require('./scrapHeadLinePhoto');
 const { promisify } = require('util');
 
-MongoClient.connect(dbUrl, (err, db) => {
+/*MongoClient.connect(dbUrl, (err, db) => {
 	if (err) console.log(err);
 	else {
 		db.db('lienet').collection('articles').find({}).sort({ id: -1 }).toArray((err, articles) => {
@@ -20,6 +20,17 @@ MongoClient.connect(dbUrl, (err, db) => {
 							if (err) throw err;
 						});
 				});
+			}
+		});
+	}
+});*/
+MongoClient.connect(dbUrl, (err, db) => {
+	if (err) console.log(err);
+	else {
+		db.db('lienet').collection('articles').deleteMany({
+			timestamp: {
+				$gte: new Date(new Date().setHours(00, 00, 00)),
+				$lt: new Date(new Date().setHours(23, 59, 59))
 			}
 		});
 	}
