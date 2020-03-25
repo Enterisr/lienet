@@ -1,5 +1,3 @@
 node_modules
 .env
-.env.test
-lienet-gmail.json
-.gitingnore
+.vscode
