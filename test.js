@@ -1,5 +1,5 @@
 const MongoClient = require('mongodb').MongoClient;
-const dbUrl = 'mongodb://DrunkTolstoyAdMatay:I38MwVBQkb#l@ds233198.mlab.com:33198/lienet';
+const dbUrl = "XX";
 const Scarper = require('./scrapHeadLinePhoto');
 const { promisify } = require('util');
 
