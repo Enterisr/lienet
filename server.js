@@ -264,11 +264,12 @@ app.post('/postArticle', utils.ensureToken, async (req, res, next) => {
 		if (user.verification_id == -1) {
 			let userWithMaxId = await articlesCollection.find().sort({ id: -1 }).limit(1).toArray();
 			let maxId = parseInt(userWithMaxId[0].id);
-			let photoUrl = await ScrapQueue.add(article);
+			ScrapQueue.add(article); //search for photo and add for db later...
 			await articlesCollection.insertOne({
 				id: maxId + 1,
-				...article,
-				photoUrl
+				photoUrl: 'https://lieneteu.herokuapp.com/logo_transparent.png',
+				...article
+				//temporary image until suitalbe image will be found... change this
 			});
 			res.send({ status: 'success', message: 'published', id: maxId + 1 });
 		} else {
@@ -294,5 +295,9 @@ app.use(express.static(path.join(__dirname, 'client/public/build')));
 
 app.listen(port, () => console.log(`lienet webapp running on port ${port}`));
 ScrapQueue.process(20, async (article) => {
-	return await Scarper.ScrapPhotoForArticle(article.text);
+	let suitablePhotoURL = await Scarper.ScrapPhotoForArticle(article.text);
+	conn = await MongoClient.connect(dbUrl);
+	const db = conn.db('lienet');
+	let articlesCollection = db.collection('articles');
+	articlesCollection.updateOne({ id: article.id }, { $set: { photoUrl: suitablePhotoURL } });
 });
