@@ -2,3 +2,6 @@ node_modules
 .env
 .env.test
 lienet-gmail.json
+.gitingnore
+client/node_modules
+admin/node_modules

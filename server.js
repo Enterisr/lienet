@@ -292,7 +292,7 @@ app.use('/admin', express.static(path.join(__dirname, 'admin/public/build')));
 app.use(express.static(path.join(__dirname, 'client/public')));
 app.use(express.static(path.join(__dirname, 'client/public/build')));
 
-app.listen(port, () => console.log(`Example app listening on port ${port}!`));
+app.listen(port, () => console.log(`lienet webapp running on port ${port}`));
 ScrapQueue.process(20, async (article) => {
 	return await Scarper.ScrapPhotoForArticle(article.text);
 });
