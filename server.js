@@ -294,7 +294,7 @@ app.use(express.static(path.join(__dirname, 'client/public')));
 app.use(express.static(path.join(__dirname, 'client/public/build')));
 
 app.listen(port, () => console.log(`lienet webapp running on port ${port}`));
-ScrapQueue.process(2, async (article) => {
+ScrapQueue.process(20, async (article) => {
 	console.log('*******starting to do scraping.....*******');
 	let suitablePhotoURL = await Scarper.ScrapPhotoForArticle(article.text);
 	conn = await MongoClient.connect(dbUrl);
