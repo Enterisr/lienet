@@ -19,3 +19,4 @@ TODO:
  - [ ] add tags functionallty
  - [ ] Scraping photo needs to be in separate dyno.
  - [ ] ask google again to put ads on it
+
