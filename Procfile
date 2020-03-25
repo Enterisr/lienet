@@ -1,2 +1,2 @@
 web: npm start
-scraper: node --inspect ScraperDynoHandler
+scraper: node --inspect scrapHeadLinePhoto
