@@ -4,6 +4,8 @@ var url = require('url');
 const puppeteer = require('puppeteer-extra');
 const scraper = {
 	ScrapPhotoForArticle: async function ScrapPhotoForArticle(article) {
+		console.log('*******" function ScrapPhotoForArticle"*******');
+
 		let mostUsedWord = this.FindMostUsedWord(article);
 
 		let url = await this.FindMatchingPhoto(mostUsedWord);
