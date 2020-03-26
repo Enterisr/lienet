@@ -1,16 +1,13 @@
 const utils = require('./utils');
 var url = require('url');
 const puppeteer = require('puppeteer-extra');
-let throng = require('throng');
+const throng = require('throng');
 let Queue = require('bull');
-let Scarper = require('./scrapHeadLinePhoto');
 let MongoClient = require('mongodb').MongoClient;
-require('net').createServer().listen(); //keep alive... probably horrible way to do that...
 const dbUrl = process.env.MONGOLAB_URI;
-let REDIS_URL = process.env.REDIS_URL || 'redis://127.0.0.1:6379';
+let REDIS_URL = process.env.REDIS_URI;
 let workers = process.env.WEB_CONCURRENCY || 2;
-const scarpQueue = new Queue('scraper', REDIS_URL);
-
+console.log('ok');
 const scraper = {
 	ScrapPhotoForArticle: async function ScrapPhotoForArticle(article) {
 		console.log('*******" function ScrapPhotoForArticle"*******');
@@ -91,15 +88,18 @@ const scraper = {
 		return word != 'את' && word != 'של' && word != 'על';
 	}
 };
-
-scarpQueue.process(workers, async (job) => {
-	const article = job.data;
-	let suitablePhotoURL = await scraper.ScrapPhotoForArticle(article);
-	conn = await MongoClient.connect(dbUrl);
-	console.log(`opening db...`);
-	const db = conn.db('lienet');
-	let articlesCollection = db.collection('articles');
-	articlesCollection.updateOne({ id: article.id }, { $set: { photoUrl: suitablePhotoURL } });
-});
+function Init() {
+	let scrapQueue = new Queue('scraper', REDIS_URL);
+	scrapQueue.process(workers, async (job) => {
+		const article = job.data;
+		let suitablePhotoURL = await scraper.ScrapPhotoForArticle(article);
+		conn = await MongoClient.connect(dbUrl);
+		console.log(`opening db...`);
+		const db = conn.db('lienet');
+		let articlesCollection = db.collection('articles');
+		articlesCollection.updateOne({ id: article.id }, { $set: { photoUrl: suitablePhotoURL } });
+	});
+}
+throng({ workers, start: Init });
 
 module.exports = scraper;

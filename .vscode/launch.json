@@ -8,8 +8,8 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "Launch Program",
-            "program": "${workspaceFolder}/test.js",
+            "name": "Launch scrapHeadLinePhoto",
+            "program": "${workspaceFolder}/scrapHeadLinePhoto.js",
             "skipFiles": [
                 "<node_internals>/**"
             ]

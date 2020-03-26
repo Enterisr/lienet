@@ -1,2 +1,2 @@
 web: npm start
-scraper: node --inspect scrapHeadLinePhoto
+scraper: npm run scrap
