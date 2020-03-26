@@ -3,11 +3,9 @@ var url = require('url');
 const puppeteer = require('puppeteer-extra');
 const throng = require('throng');
 let Queue = require('bull');
-let MongoClient = require('mongodb').MongoClient;
-const dbUrl = process.env.MONGOLAB_URI;
-let REDIS_URL = process.env.REDIS_URI;
-let workers = process.env.WEB_CONCURRENCY || 2;
-console.log('ok');
+let REDIS_URL =
+	'redis://h:p3c07ccb795884ecabc330a82c3ca339f5b17f48307b41cd31b5834d0d05b09e2@ec2-63-34-79-176.eu-west-1.compute.amazonaws.com:26999';
+let workers = process.env.WEB_CONCURRENCY || 1;
 const scraper = {
 	ScrapPhotoForArticle: async function ScrapPhotoForArticle(article) {
 		console.log('*******" function ScrapPhotoForArticle"*******');
@@ -88,18 +86,14 @@ const scraper = {
 		return word != 'את' && word != 'של' && word != 'על';
 	}
 };
-function Init() {
+function start() {
 	let scrapQueue = new Queue('scraper', REDIS_URL);
-	scrapQueue.process(workers, async (job) => {
-		const article = job.data;
+	scrapQueue.process(1, async (job) => {
+		const article = job.data.article;
 		let suitablePhotoURL = await scraper.ScrapPhotoForArticle(article);
-		conn = await MongoClient.connect(dbUrl);
-		console.log(`opening db...`);
-		const db = conn.db('lienet');
-		let articlesCollection = db.collection('articles');
-		articlesCollection.updateOne({ id: article.id }, { $set: { photoUrl: suitablePhotoURL } });
+		job.data.callback(suitablePhotoURL);
 	});
 }
-throng({ workers, start: Init });
+throng({ workers, start });
 
 module.exports = scraper;

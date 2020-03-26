@@ -1,2 +1,2 @@
-web: npm start
-scraper: npm run scrap
+web: node server.js
+worker: node --inspect scrapHeadLinePhoto.js

@@ -5,7 +5,9 @@ const MongoClient = require('mongodb').MongoClient;
 const dbUrl = process.env.MONGOLAB_URI;
 const app = express();
 const port = process.env.PORT || 6969;
-let REDIS_URI = process.env.REDIS_URI;
+let REDIS_URI =
+	'redis://h:p3c07ccb795884ecabc330a82c3ca339f5b17f48307b41cd31b5834d0d05b09e2@ec2-63-34-79-176.eu-west-1.compute.amazonaws.com:26999';
+
 const cors = require('cors');
 const path = require('path');
 const compression = require('compression');
@@ -263,7 +265,16 @@ app.post('/postArticle', utils.ensureToken, async (req, res, next) => {
 			let userWithMaxId = await articlesCollection.find().sort({ id: -1 }).limit(1).toArray();
 			let maxId = parseInt(userWithMaxId[0].id);
 			article.id = maxId + 1;
-			ScarperQueue.add(article);
+			await ScarperQueue.add({
+				article,
+				callback: async () => {
+					conn = await MongoClient.connect(dbUrl);
+					console.log(`opening db...`);
+					const db = conn.db('lienet');
+					let articlesCollection = db.collection('articles');
+					articlesCollection.updateOne({ id: article.id }, { $set: { photoUrl: suitablePhotoURL } });
+				}
+			});
 			await articlesCollection.insertOne({
 				photoUrl: 'https://lieneteu.herokuapp.com/logo_transparent.png',
 				...article
@@ -280,16 +291,6 @@ app.post('/postArticle', utils.ensureToken, async (req, res, next) => {
 		conn.close();
 	} // make sure to close your connection after
 });
-async function StartSraping() {
-	scarpQueue.process(maxJobsPerWorker, async (article) => {
-		let suitablePhotoURL = await Scarper.ScrapPhotoForArticle(article.text);
-		conn = await MongoClient.connect(dbUrl);
-		console.log(`opening db...`);
-		const db = conn.db('lienet');
-		let articlesCollection = db.collection('articles');
-		articlesCollection.updateOne({ id: article.id }, { $set: { photoUrl: suitablePhotoURL } });
-	});
-}
 app.get('/admin', utils.ensureToken, (req, res, next) => {
 	res.sendFile(path.resolve('admin', 'public', 'index.html'));
 });
