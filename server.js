@@ -4,7 +4,7 @@ const express = require('express');
 const MongoClient = require('mongodb').MongoClient;
 const dbUrl = process.env.MONGOLAB_URI;
 const app = express();
-const port = process.env.PORT || 6969;
+const port = process.env.PORT || 7070;
 let REDIS_URI =
 	'redis://h:p3c07ccb795884ecabc330a82c3ca339f5b17f48307b41cd31b5834d0d05b09e2@ec2-63-34-79-176.eu-west-1.compute.amazonaws.com:26999';
 
@@ -123,7 +123,7 @@ function SendMail() {
 		else {
 			utils.generateTokenCookie(author.mail, res, (token) => {
 				let server =
-					process.env.NODE_ENV == 'production' ? 'https://lieneteu.herokuapp.com' : 'http://localhost:6969';
+					process.env.NODE_ENV == 'production' ? 'https://lieneteu.herokuapp.com' : 'http://localhost:7070';
 				let params = {
 					verification_id: verification_id.toString(),
 					origin: server,
@@ -291,6 +291,7 @@ app.post('/postArticle', utils.ensureToken, async (req, res, next) => {
 		conn.close();
 	} // make sure to close your connection after
 });
+
 app.get('/admin', utils.ensureToken, (req, res, next) => {
 	res.sendFile(path.resolve('admin', 'public', 'index.html'));
 });
@@ -301,5 +302,5 @@ app.use('/admin', express.static(path.join(__dirname, 'admin/public')));
 app.use('/admin', express.static(path.join(__dirname, 'admin/public/build')));
 app.use(express.static(path.join(__dirname, 'client/public')));
 app.use(express.static(path.join(__dirname, 'client/public/build')));
-
+console.log('whyyyyyyyyyyyyyyy');
 app.listen(port, () => console.log(`lienet webapp running on port ${port}`));

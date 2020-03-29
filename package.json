@@ -6,7 +6,7 @@
 	"scripts": {
 		"client": "cd client && npm start",
 		"admin": "cd admin && npm start",
-		"start": "node server.js",
+		"start": "nf start",
 		"heroku-postbuild": "cd client && npm install && npm install --only=dev --no-shrinkwrap && npm run build && cd .. && cd admin && npm install && npm install --only=dev --no-shrinkwrap && npm run build",
 		"test": "echo \"Error: no test specified\" && exit 1",
 		"scrap": "node scrapHeadLinePhoto",
