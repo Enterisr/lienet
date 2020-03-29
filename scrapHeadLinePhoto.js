@@ -18,17 +18,9 @@ const scraper = {
 			console.log('*******opening browser.....*******');
 
 			const browser = await puppeteer.launch({
-				headless: false,
 				slowMo: 0,
 				ignoreHTTPSErrors: true,
-				args: [
-					/*'--proxy-server=213.6.225.134:61809',*/
-					'--no-sandbox',
-
-					'--disable-setuid-sandbox',
-					' --disable-web-security',
-					' -user-data-dir'
-				]
+				args: [ '--no-sandbox', '--disable-setuid-sandbox', ' --disable-web-security', ' -user-data-dir' ]
 			});
 			var page = await browser.newPage();
 			try {
