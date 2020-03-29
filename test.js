@@ -1,5 +1,8 @@
 const MongoClient = require('mongodb').MongoClient;
-const dbUrl = 'mongodb://DrunkTolstoyAdMatay:I38MwVBQkb#l@ds233198.mlab.com:33198/lienet';
+require('dotenv').config();
+
+const dbUrl = process.env.MONGOLAB_URI;
+
 /*MongoClient.connect(dbUrl, (err, db) => {
 	if (err) console.log(err);
 	else {
@@ -25,7 +28,7 @@ MongoClient.connect(dbUrl, (err, db) => {
 	if (err) console.log(err);
 	else {
 		db.db('lienet').collection('articles').deleteMany({
-			title: { $exists: false }
+			id: { $gt: 26 }
 		});
 	}
 });

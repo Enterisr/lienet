@@ -11,12 +11,13 @@ You can find it here [https://lieneteu.herokuapp.com/](https://lieneteu.herokuap
  - [x] share Buttons and google analytics integration
  - [x] mobile friendly
  - [x] Complete the scraping of images from search engines to articles
+ - [x] Scraping photo needs to be in separate dyno.
+
 
 TODO:
  - [ ] let user see all the articles of the author
  - [ ] add delete/edit article funcationality
  - [ ] order articles in sub categories
  - [ ] add tags functionallty
- - [ ] Scraping photo needs to be in separate dyno.
  - [ ] ask google again to put ads on it
 

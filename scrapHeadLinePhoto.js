@@ -5,8 +5,7 @@ const throng = require('throng');
 let Queue = require('bull');
 require('dotenv').config();
 
-let REDIS_URL =
-	'redis://h:p3c07ccb795884ecabc330a82c3ca339f5b17f48307b41cd31b5834d0d05b09e2@ec2-63-34-79-176.eu-west-1.compute.amazonaws.com:26999';
+let REDIS_URL = process.env.REDIS_URL;
 let workers = process.env.WEB_CONCURRENCY || 2;
 const scraper = {
 	ScrapPhotoForArticle: async function ScrapPhotoForArticle(article) {
