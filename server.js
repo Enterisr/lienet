@@ -18,7 +18,6 @@ let Queue = require('bull');
 /**************app modules************************/
 const utils = require('./utils');
 const Mailer = require('./mailer');
-const Scarper = require('./scrapHeadLinePhoto');
 let ScarperQueue = new Queue('scraper', REDIS_URI);
 const saltRounds = 10;
 mailer = new Mailer('lienetmail@gmail.com');
