@@ -84,7 +84,7 @@ function start() {
 	scrapQueue.process(3, async (job, done) => {
 		const article = job.data.article;
 		let suitablePhotoURL = await scraper.ScrapPhotoForArticle(article);
-		done(null, suitablePhotoURL, article.id);
+		done(null, { suitablePhotoURL, id: article.id });
 	});
 }
 throng({ workers, start });

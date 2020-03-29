@@ -262,7 +262,7 @@ app.post('/postArticle', utils.ensureToken, async (req, res, next) => {
 			let userWithMaxId = await articlesCollection.find().sort({ id: -1 }).limit(1).toArray();
 			let maxId = parseInt(userWithMaxId[0].id);
 			article.id = maxId + 1;
-			let callback = async (jobId, suitablePhotoURL, id) => {
+			let callback = async (jobId, { suitablePhotoURL, id }) => {
 				console.log('got to callback');
 				conn = await MongoClient.connect(dbUrl);
 				console.log(`opening db...`);
