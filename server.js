@@ -262,14 +262,14 @@ app.post('/postArticle', utils.ensureToken, async (req, res, next) => {
 			let userWithMaxId = await articlesCollection.find().sort({ id: -1 }).limit(1).toArray();
 			let maxId = parseInt(userWithMaxId[0].id);
 			article.id = maxId + 1;
-			let callback = async (jobId, suitablePhotoURL) => {
+			let callback = async (jobId, suitablePhotoURL, id) => {
 				console.log('got to callback');
 				conn = await MongoClient.connect(dbUrl);
 				console.log(`opening db...`);
 				const db = conn.db('lienet');
 				let articlesCollection = db.collection('articles');
 				let normlizedURL = suitablePhotoURL.slice(1, -1);
-				articlesCollection.updateOne({ id: article.id }, { $set: { photoUrl: normlizedURL } });
+				articlesCollection.updateOne({ id }, { $set: { photoUrl: normlizedURL } });
 			};
 			console.log('adding to mission queue');
 			await ScarperQueue.add({

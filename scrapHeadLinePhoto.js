@@ -3,6 +3,8 @@ var url = require('url');
 const puppeteer = require('puppeteer-extra');
 const throng = require('throng');
 let Queue = require('bull');
+require('dotenv').config();
+
 let REDIS_URL = process.env.REDIS_URL;
 let workers = process.env.WEB_CONCURRENCY || 2;
 const scraper = {
@@ -82,7 +84,7 @@ function start() {
 	scrapQueue.process(3, async (job, done) => {
 		const article = job.data.article;
 		let suitablePhotoURL = await scraper.ScrapPhotoForArticle(article);
-		done(null, suitablePhotoURL);
+		done(null, suitablePhotoURL, article.id);
 	});
 }
 throng({ workers, start });
