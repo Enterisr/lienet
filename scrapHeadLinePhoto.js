@@ -3,8 +3,7 @@ var url = require('url');
 const puppeteer = require('puppeteer-extra');
 const throng = require('throng');
 let Queue = require('bull');
-let REDIS_URL =
-	'redis://h:p3c07ccb795884ecabc330a82c3ca339f5b17f48307b41cd31b5834d0d05b09e2@ec2-63-34-79-176.eu-west-1.compute.amazonaws.com:26999';
+let REDIS_URL = process.env.REDIS_URL;
 let workers = process.env.WEB_CONCURRENCY || 2;
 const scraper = {
 	ScrapPhotoForArticle: async function ScrapPhotoForArticle(article) {
@@ -80,10 +79,10 @@ const scraper = {
 };
 function start() {
 	let scrapQueue = new Queue('scraper', REDIS_URL);
-	scrapQueue.process(1, async (job) => {
+	scrapQueue.process(3, async (job, done) => {
 		const article = job.data.article;
 		let suitablePhotoURL = await scraper.ScrapPhotoForArticle(article);
-		job.data.callback(suitablePhotoURL);
+		done(null, suitablePhotoURL);
 	});
 }
 throng({ workers, start });

@@ -4,10 +4,8 @@ const express = require('express');
 const MongoClient = require('mongodb').MongoClient;
 const dbUrl = process.env.MONGOLAB_URI;
 const app = express();
-const port = process.env.PORT || 7070;
-let REDIS_URI =
-	'redis://h:p3c07ccb795884ecabc330a82c3ca339f5b17f48307b41cd31b5834d0d05b09e2@ec2-63-34-79-176.eu-west-1.compute.amazonaws.com:26999';
-
+const port = process.env.PORT || 6969;
+let REDIS_URI = process.env.REDIS_URL;
 const cors = require('cors');
 const path = require('path');
 const compression = require('compression');
@@ -122,7 +120,7 @@ function SendMail() {
 		else {
 			utils.generateTokenCookie(author.mail, res, (token) => {
 				let server =
-					process.env.NODE_ENV == 'production' ? 'https://lieneteu.herokuapp.com' : 'http://localhost:7070';
+					process.env.NODE_ENV == 'production' ? 'https://lieneteu.herokuapp.com' : 'http://localhost:6969';
 				let params = {
 					verification_id: verification_id.toString(),
 					origin: server,
@@ -264,16 +262,20 @@ app.post('/postArticle', utils.ensureToken, async (req, res, next) => {
 			let userWithMaxId = await articlesCollection.find().sort({ id: -1 }).limit(1).toArray();
 			let maxId = parseInt(userWithMaxId[0].id);
 			article.id = maxId + 1;
+			let callback = async (jobId, suitablePhotoURL) => {
+				console.log('got to callback');
+				conn = await MongoClient.connect(dbUrl);
+				console.log(`opening db...`);
+				const db = conn.db('lienet');
+				let articlesCollection = db.collection('articles');
+				let normlizedURL = suitablePhotoURL.slice(1, -1);
+				articlesCollection.updateOne({ id: article.id }, { $set: { photoUrl: normlizedURL } });
+			};
+			console.log('adding to mission queue');
 			await ScarperQueue.add({
-				article,
-				callback: async () => {
-					conn = await MongoClient.connect(dbUrl);
-					console.log(`opening db...`);
-					const db = conn.db('lienet');
-					let articlesCollection = db.collection('articles');
-					articlesCollection.updateOne({ id: article.id }, { $set: { photoUrl: suitablePhotoURL } });
-				}
+				article
 			});
+			ScarperQueue.on('global:completed', callback);
 			await articlesCollection.insertOne({
 				photoUrl: 'https://lieneteu.herokuapp.com/logo_transparent.png',
 				...article
@@ -301,5 +303,4 @@ app.use('/admin', express.static(path.join(__dirname, 'admin/public')));
 app.use('/admin', express.static(path.join(__dirname, 'admin/public/build')));
 app.use(express.static(path.join(__dirname, 'client/public')));
 app.use(express.static(path.join(__dirname, 'client/public/build')));
-console.log('whyyyyyyyyyyyyyyy');
 app.listen(port, () => console.log(`lienet webapp running on port ${port}`));

@@ -17,7 +17,7 @@
     let urlAddr = document.location.origin;
     if (window.location.href.includes("localhost")) {
       const uri = new URL(window.location.origin);
-      uri.port = "7070";
+      uri.port = "6969";
       urlAddr = uri;
       urlAddr += "titles";
     } else {

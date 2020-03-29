@@ -1,2 +1,2 @@
 web: node server.js
-scraper: node scrapHeadLinePhoto.js
+scraper: node --inspect scrapHeadLinePhoto.js
